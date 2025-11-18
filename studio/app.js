@@ -4,11 +4,15 @@ const API_BASE = "/v1";
 let currentProject = null;
 let projects = JSON.parse(localStorage.getItem("ollama-pilot-projects") || "[]");
 let models = [];
+let a11yAnnouncer = null; // ARIA live region for screen readers
 
 // Init
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
+  // Initialize accessibility announcer
+  a11yAnnouncer = document.getElementById("a11y-announcer");
+
   await loadModels();
   loadProjects();
   checkGateway();
@@ -28,6 +32,14 @@ async function init() {
   else switchProject(projects[0].id);
 }
 
+// ♿ Accessibility: Announce to screen readers (throttled, non-intrusive)
+function announceToScreenReader(message) {
+  if (!a11yAnnouncer) return;
+  a11yAnnouncer.textContent = message;
+  // Clear after announcement to allow repeated identical messages
+  setTimeout(() => { a11yAnnouncer.textContent = ""; }, 1000);
+}
+
 async function loadModels() {
   try {
     const res = await fetch(`${API_BASE}/models`);
@@ -36,21 +48,43 @@ async function loadModels() {
     const select = document.getElementById("model-select");
     select.innerHTML = "<option value='auto'>🎯 Auto (Smart Routing)</option>" +
       models.map(m => `<option value="${m}">${m.replace(':latest', '')}</option>`).join("");
+    announceToScreenReader(`${models.length} modèles d'IA disponibles`);
   } catch(e) {
     console.error("Failed to load models:", e);
     document.getElementById("model-select").innerHTML = "<option>auto</option>";
+    announceToScreenReader("Erreur de chargement des modèles");
   }
 }
 
 function loadProjects() {
   const list = document.getElementById("projects-list");
-  list.innerHTML = projects.map(p => `
-    <div class="project-item ${p.id===(currentProject?.id)?'active':''}" data-id="${p.id}">
-      <div class="project-title">${escapeHtml(p.name)}</div>
-      <div class="project-preview">${escapeHtml(p.messages.slice(-1)[0]?.content?.slice(0,50) || "Nouveau projet")}...</div>
-    </div>
-  `).join("");
-  list.querySelectorAll(".project-item").forEach(el => el.onclick = () => switchProject(el.dataset.id));
+  list.innerHTML = projects.map(p => {
+    const isActive = p.id === (currentProject?.id);
+    return `
+      <div
+        class="project-item ${isActive ? 'active' : ''}"
+        data-id="${p.id}"
+        role="button"
+        tabindex="0"
+        aria-current="${isActive}"
+        aria-label="Projet : ${escapeHtml(p.name)}${isActive ? ' (actif)' : ''}"
+      >
+        <div class="project-title">${escapeHtml(p.name)}</div>
+        <div class="project-preview" aria-hidden="true">${escapeHtml(p.messages.slice(-1)[0]?.content?.slice(0,50) || "Nouveau projet")}...</div>
+      </div>
+    `;
+  }).join("");
+
+  // Add click and keyboard handlers
+  list.querySelectorAll(".project-item").forEach(el => {
+    el.onclick = () => switchProject(el.dataset.id);
+    el.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        switchProject(el.dataset.id);
+      }
+    };
+  });
 }
 
 function createProject() {
@@ -66,6 +100,7 @@ function createProject() {
   projects.push(project);
   saveProjects();
   switchProject(project.id);
+  announceToScreenReader(`Nouveau projet créé : ${name}`);
 }
 
 function switchProject(id) {
@@ -75,6 +110,7 @@ function switchProject(id) {
   document.getElementById("model-select").value = currentProject.preferredModel || "auto";
   renderMessages();
   loadProjects();
+  announceToScreenReader(`Projet actif : ${currentProject.name}`);
 }
 
 function saveProjects() {
@@ -84,8 +120,8 @@ function saveProjects() {
 
 function renderMessages() {
   const container = document.getElementById("messages");
-  container.innerHTML = currentProject.messages.map(msg => `
-    <div class="message ${msg.role}">
+  container.innerHTML = currentProject.messages.map((msg, idx) => `
+    <div class="message ${msg.role}" role="article" aria-label="${msg.role === 'user' ? 'Vous' : 'Assistant'} : message ${idx + 1}">
       <div class="bubble">${msg.role==="assistant" ? marked.parse(msg.content) : escapeHtml(msg.content)}</div>
     </div>
   `).join("");
@@ -102,6 +138,7 @@ async function sendMessage(e) {
   // Disable input during generation
   input.disabled = true;
   sendBtn.disabled = true;
+  sendBtn.setAttribute("aria-label", "Envoi en cours…");
 
   currentProject.messages.push({role:"user", content:text});
   renderMessages();
@@ -117,6 +154,10 @@ async function sendMessage(e) {
     messages,
     stream: true
   };
+
+  // ♿ Announce start of response (once, not on every chunk)
+  const modelName = model === "auto" ? "modèle intelligent" : model.replace(':latest', '');
+  announceToScreenReader(`L'assistant ${modelName} répond…`);
 
   try {
     const response = await fetch(`${API_BASE}/chat/completions`, {
@@ -147,12 +188,16 @@ async function sendMessage(e) {
             assistantMsg += delta;
             currentProject.messages[currentProject.messages.length-1].content = assistantMsg;
             renderMessages();
+            // ♿ NO announcement here - avoid spam
           } catch(e) {
             console.error("Parse error:", e);
           }
         }
       }
     }
+
+    // ♿ Announce completion (once at end)
+    announceToScreenReader(`Réponse complète reçue de ${modelName}`);
     saveProjects();
   } catch(error) {
     console.error("Send message error:", error);
@@ -161,33 +206,53 @@ async function sendMessage(e) {
       content:`❌ Erreur: ${error.message}\n\nVérifiez que le gateway est démarré et accessible.`
     });
     renderMessages();
+    announceToScreenReader(`Erreur : ${error.message}`);
   } finally {
     input.disabled = false;
     sendBtn.disabled = false;
+    sendBtn.setAttribute("aria-label", "Envoyer le message");
     input.focus();
   }
 }
 
 async function checkGateway() {
+  const statusEl = document.getElementById("status");
   try {
     const res = await fetch(`${API_BASE}/models`);
     if(res.ok) {
-      document.getElementById("status").className = "online";
-      document.getElementById("status").textContent = "●";
+      const wasOffline = statusEl.className !== "online";
+      statusEl.className = "online";
+      statusEl.textContent = "●";
+      statusEl.setAttribute("aria-label", "Statut du gateway : en ligne");
+      if (wasOffline) {
+        announceToScreenReader("Gateway Ollama connecté");
+      }
     } else {
-      document.getElementById("status").className = "";
-      document.getElementById("status").textContent = "●";
+      statusEl.className = "";
+      statusEl.textContent = "●";
+      statusEl.setAttribute("aria-label", "Statut du gateway : hors ligne");
     }
   } catch(e) {
-    document.getElementById("status").className = "";
-    document.getElementById("status").textContent = "●";
+    statusEl.className = "";
+    statusEl.textContent = "●";
+    statusEl.setAttribute("aria-label", "Statut du gateway : hors ligne");
   }
 }
 
 function toggleTheme() {
   const current = document.documentElement.dataset.theme;
-  document.documentElement.dataset.theme = current === "dark" ? "light" : "dark";
-  document.getElementById("theme-toggle").textContent = current === "dark" ? "🌙" : "☀️";
+  const newTheme = current === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = newTheme;
+
+  const btn = document.getElementById("theme-toggle");
+  btn.textContent = current === "dark" ? "🌙" : "☀️";
+  btn.setAttribute("aria-label",
+    newTheme === "dark"
+      ? "Basculer en mode clair"
+      : "Basculer en mode sombre"
+  );
+
+  announceToScreenReader(`Thème ${newTheme === "dark" ? "sombre" : "clair"} activé`);
 }
 
 function escapeHtml(text) {

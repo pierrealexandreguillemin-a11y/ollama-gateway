@@ -20,6 +20,31 @@
   --message-assistant: #1a7f37;
 }
 
+/* ♿ Accessibility: Screen-reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ♿ Accessibility: Focus states (visible for keyboard navigation) */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+.project-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); display:flex; height:100vh; overflow:hidden; }
 #sidebar { width:280px; background:var(--sidebar); border-right:1px solid var(--border); display:flex; flex-direction:column; }

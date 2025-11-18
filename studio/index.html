@@ -9,33 +9,43 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+  <!-- ARIA Live Region for Screen Reader Announcements -->
+  <div id="a11y-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
   <!-- Sidebar -->
-  <div id="sidebar">
+  <aside id="sidebar" role="navigation" aria-label="Projets et navigation">
     <div class="header">
       <h1>🐙 Pilot Studio</h1>
-      <button id="new-project">＋ Nouveau projet</button>
+      <button id="new-project" aria-label="Créer un nouveau projet">＋ Nouveau projet</button>
     </div>
-    <div id="projects-list"></div>
+    <nav id="projects-list" role="list" aria-label="Liste des projets"></nav>
     <div class="footer">
-      <small>Gateway <span id="status">●</span></small>
-      <button id="theme-toggle">☀️</button>
+      <small>Gateway <span id="status" role="status" aria-live="polite" aria-label="Statut du gateway : hors ligne">●</span></small>
+      <button id="theme-toggle" aria-label="Basculer entre mode sombre et mode clair">☀️</button>
     </div>
-  </div>
+  </aside>
 
   <!-- Main -->
-  <div id="main">
-    <div id="chat-header">
+  <main id="main" role="main">
+    <header id="chat-header">
       <h2 id="project-title">Bienvenue</h2>
-      <select id="model-select"></select>
-    </div>
+      <label for="model-select" class="sr-only">Sélectionner le modèle d'IA</label>
+      <select id="model-select" aria-label="Modèle d'intelligence artificielle"></select>
+    </header>
 
-    <div id="messages"></div>
+    <div id="messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Historique de la conversation"></div>
 
-    <form id="input-area">
-      <textarea id="user-input" placeholder="Pose ta question… (Ctrl + Enter pour envoyer)" autofocus></textarea>
-      <button type="submit" id="send-btn">➤</button>
+    <form id="input-area" aria-label="Zone de saisie du message">
+      <label for="user-input" class="sr-only">Votre message à l'assistant</label>
+      <textarea
+        id="user-input"
+        placeholder="Pose ta question… (Ctrl + Enter pour envoyer)"
+        aria-label="Votre message à l'assistant"
+        autofocus
+      ></textarea>
+      <button type="submit" id="send-btn" aria-label="Envoyer le message">➤</button>
     </form>
-  </div>
+  </main>
 
   <script src="app.js"></script>
 </body>
