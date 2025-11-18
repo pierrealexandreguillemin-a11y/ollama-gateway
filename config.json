@@ -1,0 +1,54 @@
+{
+  "models": {
+    "deepseek-coder-v2:latest": {
+      "role": "coding",
+      "tags": ["code", "python", "javascript", "typescript", "java", "rust", "go", "c++", "bug", "debug", "refactor", "function", "class", "api", "algorithm"],
+      "priority": 1
+    },
+    "deepseek-chess:latest": {
+      "role": "chess",
+      "tags": ["échecs", "chess", "fen", "pgn", "ouverture", "opening", "gambit", "endgame", "position", "move", "checkmate", "strategy"],
+      "priority": 1
+    },
+    "gemma2:latest": {
+      "role": "creative",
+      "tags": ["creative", "story", "write", "poem", "creative", "imagine", "brainstorm", "design"],
+      "priority": 2
+    },
+    "gemma2-chess:latest": {
+      "role": "chess_analysis",
+      "tags": ["chess analysis", "position evaluation", "tactics"],
+      "priority": 2
+    },
+    "qwen2.5:latest": {
+      "role": "multilingual",
+      "tags": ["translate", "translation", "français", "english", "español", "japanese", "chinese", "language"],
+      "priority": 2
+    },
+    "qwen2.5-chess:latest": {
+      "role": "chess_training",
+      "tags": ["chess training", "learning"],
+      "priority": 3
+    },
+    "llama3.2:latest": {
+      "role": "fast",
+      "tags": ["quick", "fast", "short", "simple"],
+      "priority": 3
+    },
+    "llama3.2-chess:latest": {
+      "role": "chess_quick",
+      "tags": ["chess quick"],
+      "priority": 3
+    },
+    "mistral:latest": {
+      "role": "general",
+      "tags": [],
+      "priority": 1
+    }
+  },
+  "default_model": "mistral:latest",
+  "ollama_base_url": "http://localhost:11434",
+  "gateway_port": 4000,
+  "enable_streaming": true,
+  "enable_logging": true
+}
