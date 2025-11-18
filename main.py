@@ -2,25 +2,26 @@
 Ollama Gateway - OpenAI-compatible API for local Ollama models
 Enables Claude-Code, Continue.dev, and other tools to use local models
 """
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import StreamingResponse, JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-import httpx
+
 import json
-import time
-import os
-from typing import Optional, Dict, Any
-from router import IntelligentRouter
 import logging
+import os
+import time
+
+import httpx
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+
+from router import IntelligentRouter
 
 # Load environment variables
 load_dotenv()
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ with open("config.json") as f:
 app = FastAPI(
     title="Ollama Gateway",
     description="OpenAI-compatible gateway for local Ollama models with intelligent routing",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Enable CORS
@@ -49,16 +50,22 @@ router = IntelligentRouter()
 # Configuration from environment or config.json
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", config["ollama_base_url"])
 GATEWAY_PORT = int(os.getenv("GATEWAY_PORT", config.get("gateway_port", 4000)))
-ENABLE_STREAMING = os.getenv("ENABLE_STREAMING", str(config.get("enable_streaming", True))).lower() == "true"
-ENABLE_LOGGING = os.getenv("ENABLE_LOGGING", str(config.get("enable_logging", True))).lower() == "true"
+ENABLE_STREAMING = (
+    os.getenv("ENABLE_STREAMING", str(config.get("enable_streaming", True))).lower() == "true"
+)
+ENABLE_LOGGING = (
+    os.getenv("ENABLE_LOGGING", str(config.get("enable_logging", True))).lower() == "true"
+)
 
 
 @app.get("/")
 async def root():
     """Redirect to Pilot Studio if available, otherwise show API info"""
     import os
+
     if os.path.exists("studio/index.html"):
         from fastapi.responses import RedirectResponse
+
         return RedirectResponse(url="/studio/")
     return {
         "status": "healthy",
@@ -70,8 +77,8 @@ async def root():
             "api": "/v1/chat/completions",
             "models": "/v1/models",
             "health": "/health",
-            "studio": "/studio/"
-        }
+            "studio": "/studio/",
+        },
     }
 
 
@@ -88,17 +95,13 @@ async def health():
             "ollama_connected": True,
             "ollama_models_count": len(ollama_models),
             "configured_models": len(config["models"]),
-            "routing_enabled": True
+            "routing_enabled": True,
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")
         return JSONResponse(
             status_code=503,
-            content={
-                "status": "unhealthy",
-                "ollama_connected": False,
-                "error": str(e)
-            }
+            content={"status": "unhealthy", "ollama_connected": False, "error": str(e)},
         )
 
 
@@ -122,11 +125,11 @@ async def list_models():
                 "metadata": {
                     "role": model["role"],
                     "priority": model["priority"],
-                    "tags": model["tags"]
-                }
+                    "tags": model["tags"],
+                },
             }
             for model in models_info["models"]
-        ]
+        ],
     }
 
 
@@ -140,7 +143,7 @@ async def chat_completion(request: Request):
         payload = await request.json()
 
         if ENABLE_LOGGING:
-            logger.info(f"Received chat completion request")
+            logger.info("Received chat completion request")
 
         # Extract user message for routing
         messages = payload.get("messages", [])
@@ -148,10 +151,7 @@ async def chat_completion(request: Request):
             raise HTTPException(status_code=400, detail="No messages provided")
 
         # Get last user message for routing decision
-        user_message = next(
-            (m["content"] for m in reversed(messages) if m["role"] == "user"),
-            ""
-        )
+        user_message = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
 
         # Intelligent routing
         requested_model = payload.get("model")
@@ -168,17 +168,15 @@ async def chat_completion(request: Request):
             "options": {
                 "temperature": payload.get("temperature", 0.7),
                 "top_p": payload.get("top_p", 0.9),
-                "max_tokens": payload.get("max_tokens", 2048)
-            }
+                "max_tokens": payload.get("max_tokens", 2048),
+            },
         }
 
         async with httpx.AsyncClient(timeout=120.0) as client:
             if ollama_payload["stream"] and ENABLE_STREAMING:
                 # Streaming response
                 response = await client.post(
-                    f"{OLLAMA_URL}/api/chat",
-                    json=ollama_payload,
-                    timeout=None
+                    f"{OLLAMA_URL}/api/chat", json=ollama_payload, timeout=None
                 )
 
                 async def generate():
@@ -192,13 +190,17 @@ async def chat_completion(request: Request):
                                     "object": "chat.completion.chunk",
                                     "created": int(time.time()),
                                     "model": selected_model,
-                                    "choices": [{
-                                        "index": 0,
-                                        "delta": {
-                                            "content": data.get("message", {}).get("content", "")
-                                        },
-                                        "finish_reason": "stop" if data.get("done") else None
-                                    }]
+                                    "choices": [
+                                        {
+                                            "index": 0,
+                                            "delta": {
+                                                "content": data.get("message", {}).get(
+                                                    "content", ""
+                                                )
+                                            },
+                                            "finish_reason": "stop" if data.get("done") else None,
+                                        }
+                                    ],
                                 }
                                 yield f"data: {json.dumps(openai_chunk)}\n\n"
 
@@ -214,16 +216,13 @@ async def chat_completion(request: Request):
                     headers={
                         "Cache-Control": "no-cache",
                         "Connection": "keep-alive",
-                        "Access-Control-Allow-Origin": "*"
-                    }
+                        "Access-Control-Allow-Origin": "*",
+                    },
                 )
 
             else:
                 # Non-streaming response
-                response = await client.post(
-                    f"{OLLAMA_URL}/api/chat",
-                    json=ollama_payload
-                )
+                response = await client.post(f"{OLLAMA_URL}/api/chat", json=ollama_payload)
 
                 ollama_data = response.json()
 
@@ -233,23 +232,26 @@ async def chat_completion(request: Request):
                     "object": "chat.completion",
                     "created": int(time.time()),
                     "model": selected_model,
-                    "choices": [{
-                        "index": 0,
-                        "message": {
-                            "role": "assistant",
-                            "content": ollama_data.get("message", {}).get("content", "")
-                        },
-                        "finish_reason": "stop"
-                    }],
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {
+                                "role": "assistant",
+                                "content": ollama_data.get("message", {}).get("content", ""),
+                            },
+                            "finish_reason": "stop",
+                        }
+                    ],
                     "usage": {
                         "prompt_tokens": ollama_data.get("prompt_eval_count", 0),
                         "completion_tokens": ollama_data.get("eval_count", 0),
-                        "total_tokens": ollama_data.get("prompt_eval_count", 0) + ollama_data.get("eval_count", 0)
+                        "total_tokens": ollama_data.get("prompt_eval_count", 0)
+                        + ollama_data.get("eval_count", 0),
                     },
                     "metadata": {
                         "routing_reason": routing_reason,
-                        "selected_model": selected_model
-                    }
+                        "selected_model": selected_model,
+                    },
                 }
 
                 return JSONResponse(openai_response)
@@ -279,16 +281,13 @@ async def test_routing(request: Request):
 
     model, reason = router.route(prompt)
 
-    return {
-        "prompt": prompt,
-        "selected_model": model,
-        "reason": reason
-    }
+    return {"prompt": prompt, "selected_model": model, "reason": reason}
 
 
 # Mount Pilot Studio (must be AFTER all API routes to avoid conflicts)
 if os.path.exists("studio"):
     from fastapi.staticfiles import StaticFiles
+
     app.mount("/studio", StaticFiles(directory="studio", html=True), name="studio")
     logger.info("✅ Pilot Studio mounted at /studio")
 else:
@@ -305,9 +304,4 @@ if __name__ == "__main__":
     logger.info(f"Streaming: {'enabled' if ENABLE_STREAMING else 'disabled'}")
     logger.info(f"Dashboard: http://localhost:{GATEWAY_PORT}/studio")
 
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=GATEWAY_PORT,
-        log_level="info"
-    )
+    uvicorn.run(app, host="0.0.0.0", port=GATEWAY_PORT, log_level="info")

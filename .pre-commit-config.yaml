@@ -1,0 +1,101 @@
+# ⚡ PRE-COMMIT HOOKS - NIVEAU 3: BLOCAGE Commit/Push
+# Install: pip install pre-commit && pre-commit install
+
+repos:
+  # ===== PYTHON CODE QUALITY =====
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        name: "🐍 Black - Python Formatter"
+        language_version: python3
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        name: "🐍 Flake8 - Python Linter"
+        args: ['--max-line-length=100', '--extend-ignore=E203,W503']
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: "🐍 isort - Import Sorter"
+        args: ['--profile', 'black']
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        name: "🐍 mypy - Type Checker"
+        additional_dependencies: [types-all]
+        args: ['--ignore-missing-imports', '--strict']
+
+  # ===== JAVASCRIPT CODE QUALITY =====
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.0.0
+    hooks:
+      - id: eslint
+        name: "📜 ESLint - JavaScript Linter"
+        files: \.js$
+        types: [file]
+        additional_dependencies:
+          - eslint@8.57.0
+          - eslint-config-prettier@9.1.0
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: "📜 Prettier - JavaScript Formatter"
+        files: \.(js|html|css|json|md)$
+        args: ['--write', '--print-width=100', '--single-quote']
+
+  # ===== GENERAL FILE QUALITY =====
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: "🧹 Remove Trailing Whitespace"
+      - id: end-of-file-fixer
+        name: "🧹 Fix End of Files"
+      - id: check-yaml
+        name: "🧹 Check YAML Syntax"
+      - id: check-json
+        name: "🧹 Check JSON Syntax"
+      - id: check-added-large-files
+        name: "🧹 Check Large Files (>500KB)"
+        args: ['--maxkb=500']
+      - id: check-merge-conflict
+        name: "🧹 Check Merge Conflicts"
+      - id: detect-private-key
+        name: "🔒 Detect Private Keys"
+
+  # ===== COMMIT MESSAGE QUALITY =====
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        name: "📝 Conventional Commits"
+        stages: [commit-msg]
+        args: ['--strict']
+
+  # ===== ACCESSIBILITY CHECKS =====
+  - repo: local
+    hooks:
+      - id: a11y-check
+        name: "♿ Check Accessibility Attributes"
+        entry: bash -c 'grep -L "aria-label\|aria-labelledby" studio/*.html && echo "❌ Missing ARIA labels in HTML" && exit 1 || echo "✅ ARIA labels present"'
+        language: system
+        files: \.html$
+        pass_filenames: false
+
+  # ===== SECURITY CHECKS =====
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.6
+    hooks:
+      - id: bandit
+        name: "🔒 Bandit - Security Scanner"
+        args: ['-ll', '-i']
+        files: \.py$

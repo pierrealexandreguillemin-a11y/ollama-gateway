@@ -2,9 +2,10 @@
 Intelligent routing logic for Ollama Gateway
 Routes prompts to the best local model based on content analysis
 """
+
 import json
 from typing import Dict, Optional
-from pathlib import Path
+
 
 class IntelligentRouter:
     def __init__(self, config_path: str = "config.json"):
@@ -39,13 +40,13 @@ class IntelligentRouter:
                     matched_tags.append(tag)
 
             # Bonus for high priority models
-            score += (4 - model_info["priority"])
+            score += 4 - model_info["priority"]
 
             if score > 0:
                 scores[model_name] = {
                     "score": score,
                     "tags": matched_tags,
-                    "role": model_info["role"]
+                    "role": model_info["role"],
                 }
 
         # Select best model
@@ -57,8 +58,9 @@ class IntelligentRouter:
 
         # Long prompts (>4000 chars) -> use reasoning model
         if len(prompt) > 4000:
-            reasoning_models = [m for m, info in self.models.items()
-                              if info["role"] in ["reasoning", "creative"]]
+            reasoning_models = [
+                m for m, info in self.models.items() if info["role"] in ["reasoning", "creative"]
+            ]
             if reasoning_models:
                 return reasoning_models[0], "Long prompt - reasoning required"
 
@@ -73,9 +75,9 @@ class IntelligentRouter:
                     "name": name,
                     "role": info["role"],
                     "priority": info["priority"],
-                    "tags": info["tags"]
+                    "tags": info["tags"],
                 }
                 for name, info in self.models.items()
             ],
-            "default": self.default_model
+            "default": self.default_model,
         }

@@ -1,0 +1,30 @@
+# ⚡ Development Dependencies - Code Quality Tools
+
+# ===== PYTHON LINTING & FORMATTING =====
+black>=24.1.1                # Code formatter
+flake8>=7.0.0                # Linter (PEP 8)
+isort>=5.13.2                # Import sorter
+mypy>=1.8.0                  # Static type checker
+pylint>=3.0.3                # Code quality analyzer
+bandit>=1.7.6                # Security linter
+
+# ===== PRE-COMMIT HOOKS =====
+pre-commit>=3.6.0            # Git hooks manager
+
+# ===== TESTING (Future) =====
+pytest>=7.4.4                # Testing framework
+pytest-cov>=4.1.0            # Coverage plugin
+pytest-asyncio>=0.23.3       # Async testing support
+httpx>=0.26.0                # HTTP testing (already in main requirements)
+
+# ===== TYPE STUBS =====
+types-requests>=2.31.0       # Type hints for requests
+types-setuptools>=69.0.0     # Type hints for setuptools
+
+# ===== DOCUMENTATION (Future) =====
+# mkdocs>=1.5.3              # Documentation generator
+# mkdocs-material>=9.5.3     # Material theme for mkdocs
+
+# ===== JAVASCRIPT/NODE (Optional - for ESLint/Prettier) =====
+# Note: These are Node.js packages, install separately:
+# npm install -g eslint prettier eslint-config-prettier
