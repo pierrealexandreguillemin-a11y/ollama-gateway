@@ -8,9 +8,14 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import json
 import time
+import os
 from typing import Optional, Dict, Any
 from router import IntelligentRouter
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Setup logging
 logging.basicConfig(
@@ -41,9 +46,11 @@ app.add_middleware(
 # Initialize router
 router = IntelligentRouter()
 
-OLLAMA_URL = config["ollama_base_url"]
-ENABLE_STREAMING = config.get("enable_streaming", True)
-ENABLE_LOGGING = config.get("enable_logging", True)
+# Configuration from environment or config.json
+OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", config["ollama_base_url"])
+GATEWAY_PORT = int(os.getenv("GATEWAY_PORT", config.get("gateway_port", 4000)))
+ENABLE_STREAMING = os.getenv("ENABLE_STREAMING", str(config.get("enable_streaming", True))).lower() == "true"
+ENABLE_LOGGING = os.getenv("ENABLE_LOGGING", str(config.get("enable_logging", True))).lower() == "true"
 
 
 @app.get("/")
@@ -191,7 +198,15 @@ async def chat_completion(request: Request):
                             except json.JSONDecodeError:
                                 continue
 
-                return StreamingResponse(generate(), media_type="text/event-stream")
+                return StreamingResponse(
+                    generate(),
+                    media_type="text/event-stream",
+                    headers={
+                        "Cache-Control": "no-cache",
+                        "Connection": "keep-alive",
+                        "Access-Control-Allow-Origin": "*"
+                    }
+                )
 
             else:
                 # Non-streaming response
@@ -263,15 +278,16 @@ async def test_routing(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    port = config.get("gateway_port", 4000)
 
-    logger.info(f"Starting Ollama Gateway on port {port}")
+    logger.info(f"Starting Ollama Gateway on port {GATEWAY_PORT}")
+    logger.info(f"Ollama URL: {OLLAMA_URL}")
     logger.info(f"Configured models: {len(config['models'])}")
     logger.info(f"Default model: {config['default_model']}")
+    logger.info(f"Streaming: {'enabled' if ENABLE_STREAMING else 'disabled'}")
 
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=port,
+        port=GATEWAY_PORT,
         log_level="info"
     )

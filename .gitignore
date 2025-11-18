@@ -11,3 +11,4 @@ ENV/
 *.log
 *.sqlite
 .DS_Store
+.env
