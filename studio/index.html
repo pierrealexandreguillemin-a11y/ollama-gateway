@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ollama Pilot Studio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐙</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="header">
+      <h1>🐙 Pilot Studio</h1>
+      <button id="new-project">＋ Nouveau projet</button>
+    </div>
+    <div id="projects-list"></div>
+    <div class="footer">
+      <small>Gateway <span id="status">●</span></small>
+      <button id="theme-toggle">☀️</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+    <div id="chat-header">
+      <h2 id="project-title">Bienvenue</h2>
+      <select id="model-select"></select>
+    </div>
+
+    <div id="messages"></div>
+
+    <form id="input-area">
+      <textarea id="user-input" placeholder="Pose ta question… (Ctrl + Enter pour envoyer)" autofocus></textarea>
+      <button type="submit" id="send-btn">➤</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

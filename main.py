@@ -55,13 +55,23 @@ ENABLE_LOGGING = os.getenv("ENABLE_LOGGING", str(config.get("enable_logging", Tr
 
 @app.get("/")
 async def root():
-    """Health check endpoint"""
+    """Redirect to Pilot Studio if available, otherwise show API info"""
+    import os
+    if os.path.exists("studio/index.html"):
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/studio/")
     return {
         "status": "healthy",
         "service": "Ollama Gateway",
         "version": "1.0.0",
         "ollama_url": OLLAMA_URL,
-        "models_configured": len(config["models"])
+        "models_configured": len(config["models"]),
+        "endpoints": {
+            "api": "/v1/chat/completions",
+            "models": "/v1/models",
+            "health": "/health",
+            "studio": "/studio/"
+        }
     }
 
 
@@ -276,6 +286,15 @@ async def test_routing(request: Request):
     }
 
 
+# Mount Pilot Studio (must be AFTER all API routes to avoid conflicts)
+if os.path.exists("studio"):
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/studio", StaticFiles(directory="studio", html=True), name="studio")
+    logger.info("✅ Pilot Studio mounted at /studio")
+else:
+    logger.warning("⚠️  studio/ directory not found - dashboard unavailable")
+
+
 if __name__ == "__main__":
     import uvicorn
 
@@ -284,6 +303,7 @@ if __name__ == "__main__":
     logger.info(f"Configured models: {len(config['models'])}")
     logger.info(f"Default model: {config['default_model']}")
     logger.info(f"Streaming: {'enabled' if ENABLE_STREAMING else 'disabled'}")
+    logger.info(f"Dashboard: http://localhost:{GATEWAY_PORT}/studio")
 
     uvicorn.run(
         app,
