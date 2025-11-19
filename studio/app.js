@@ -20,6 +20,7 @@ async function init() {
 
   document.getElementById("new-project").onclick = createProject;
   document.getElementById("theme-toggle").onclick = toggleTheme;
+  document.getElementById("stop-server").onclick = stopServer;
   document.getElementById("input-area").onsubmit = sendMessage;
   document.getElementById("user-input").onkeydown = e => {
     if(e.key==="Enter" && !e.shiftKey && e.ctrlKey) {
@@ -46,9 +47,11 @@ async function loadModels() {
     const data = await res.json();
     models = data.data.map(m => m.id);
     const select = document.getElementById("model-select");
-    select.innerHTML = "<option value='auto'>🎯 Auto (Smart Routing)</option>" +
+    select.innerHTML =
+      "<option value='auto'>🎯 Auto (Smart Routing)</option>" +
+      "<option value='orchestrate'>🤖 Orchestrate (Multi-AI)</option>" +
       models.map(m => `<option value="${m}">${m.replace(':latest', '')}</option>`).join("");
-    announceToScreenReader(`${models.length} modèles d'IA disponibles`);
+    announceToScreenReader(`${models.length} modèles d'IA disponibles + orchestration multi-modèle`);
   } catch(e) {
     console.error("Failed to load models:", e);
     document.getElementById("model-select").innerHTML = "<option>auto</option>";
@@ -259,4 +262,30 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
+}
+
+async function stopServer() {
+  if (!confirm("Arrêter le serveur Ollama Gateway ?\n\nVous devrez le redémarrer manuellement avec start.bat")) {
+    return;
+  }
+
+  try {
+    announceToScreenReader("Arrêt du serveur en cours...");
+    await fetch("/gateway/shutdown", { method: "POST" });
+    announceToScreenReader("Le serveur s'arrête. Rechargez la page pour redémarrer.");
+
+    // Update UI to show server is stopping
+    const statusEl = document.getElementById("status");
+    statusEl.className = "";
+    statusEl.textContent = "●";
+    statusEl.setAttribute("aria-label", "Statut du gateway : arrêt en cours");
+
+    // Show message after 2 seconds
+    setTimeout(() => {
+      alert("Serveur arrêté. Pour redémarrer :\n\n1. Lancez start.bat\n2. Rechargez cette page");
+    }, 2000);
+  } catch(e) {
+    console.error("Stop server error:", e);
+    announceToScreenReader("Erreur lors de l'arrêt du serveur");
+  }
 }

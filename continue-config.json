@@ -1,0 +1,113 @@
+{
+  "models": [
+    {
+      "title": "🤖 Orchestrate (Multi-AI)",
+      "provider": "openai",
+      "model": "orchestrate",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 8192,
+      "description": "Uses multiple AI models working together for complex tasks"
+    },
+    {
+      "title": "🎯 Auto Routing",
+      "provider": "openai",
+      "model": "auto",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 8192,
+      "description": "Intelligent routing to the best model based on your question"
+    },
+    {
+      "title": "💻 DeepSeek Coder",
+      "provider": "openai",
+      "model": "deepseek-coder-v2:latest",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 16384,
+      "description": "Specialized in coding, debugging, and algorithms"
+    },
+    {
+      "title": "♟️ Chess Expert",
+      "provider": "openai",
+      "model": "deepseek-chess:latest",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 8192,
+      "description": "Expert in chess strategy, openings, and game analysis"
+    },
+    {
+      "title": "🌍 Multilingual",
+      "provider": "openai",
+      "model": "qwen2.5:latest",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 32768,
+      "description": "Translation and multilingual tasks"
+    },
+    {
+      "title": "✍️ Creative Writer",
+      "provider": "openai",
+      "model": "gemma2:latest",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 8192,
+      "description": "Creative writing, stories, and poems"
+    },
+    {
+      "title": "🧠 General Knowledge",
+      "provider": "openai",
+      "model": "mistral:latest",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 8192,
+      "description": "General purpose model for various tasks"
+    },
+    {
+      "title": "⚡ Fast Response",
+      "provider": "openai",
+      "model": "llama3.2:latest",
+      "apiBase": "http://localhost:4000/v1",
+      "apiKey": "not-needed",
+      "contextLength": 4096,
+      "description": "Quick responses for simple questions"
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "Autocomplete",
+    "provider": "openai",
+    "model": "deepseek-coder-v2:latest",
+    "apiBase": "http://localhost:4000/v1",
+    "apiKey": "not-needed"
+  },
+  "embeddingsProvider": {
+    "provider": "openai",
+    "model": "nomic-embed-text",
+    "apiBase": "http://localhost:11434",
+    "apiKey": "ollama"
+  },
+  "customCommands": [
+    {
+      "name": "orchestrate-refactor",
+      "prompt": "Using multi-model orchestration, analyze this code from multiple perspectives (security, performance, maintainability) and provide a comprehensive refactoring plan with implementation.",
+      "description": "Deep refactoring analysis with multiple AI models"
+    },
+    {
+      "name": "explain-and-implement",
+      "prompt": "First explain the concept thoroughly, then implement it with complete examples and tests.",
+      "description": "Educational explanation + implementation"
+    },
+    {
+      "name": "compare-approaches",
+      "prompt": "Compare multiple approaches to solve this problem, list pros/cons for each, and recommend the best one with implementation.",
+      "description": "Multi-approach comparison"
+    }
+  ],
+  "slashCommands": [
+    {
+      "name": "orchestrate",
+      "description": "Use multi-model orchestration for complex tasks",
+      "step": "Ask a complex question that will be handled by multiple AI models working together"
+    }
+  ]
+}

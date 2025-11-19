@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from router import IntelligentRouter
+from orchestrator import TaskOrchestrator
 
 # Load environment variables
 load_dotenv()
@@ -44,11 +45,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize router
+# Initialize router and orchestrator
 router = IntelligentRouter()
 
 # Configuration from environment or config.json
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", config["ollama_base_url"])
+
+# Initialize orchestrator (after OLLAMA_URL is set)
+orchestrator = TaskOrchestrator(router, OLLAMA_URL)
 GATEWAY_PORT = int(os.getenv("GATEWAY_PORT", config.get("gateway_port", 4000)))
 ENABLE_STREAMING = (
     os.getenv("ENABLE_STREAMING", str(config.get("enable_streaming", True))).lower() == "true"
@@ -153,8 +157,47 @@ async def chat_completion(request: Request):
         # Get last user message for routing decision
         user_message = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
 
-        # Intelligent routing
+        # Check for orchestration mode
         requested_model = payload.get("model")
+
+        if requested_model == "orchestrate":
+            # Use multi-model orchestration for complex tasks
+            async with httpx.AsyncClient(timeout=180.0) as client:
+                result = await orchestrator.orchestrate(user_message, client)
+
+                if result:
+                    # Orchestration successful
+                    response_data = {
+                        "id": f"chatcmpl-{int(time.time())}",
+                        "object": "chat.completion",
+                        "created": int(time.time()),
+                        "model": "orchestrate",
+                        "choices": [
+                            {
+                                "index": 0,
+                                "message": {
+                                    "role": "assistant",
+                                    "content": result["answer"],
+                                },
+                                "finish_reason": "stop",
+                            }
+                        ],
+                        "usage": {
+                            "prompt_tokens": len(user_message.split()),
+                            "completion_tokens": len(result["answer"].split()),
+                            "total_tokens": len(user_message.split()) + len(result["answer"].split()),
+                        },
+                        "metadata": {
+                            "orchestration": True,
+                            "subtasks": result["subtasks"],
+                            "models_used": result["models_used"],
+                            "orchestration_steps": result["orchestration_steps"]
+                        },
+                    }
+                    return JSONResponse(response_data)
+                # If orchestration fails, fall through to normal routing
+
+        # Intelligent routing (normal mode or orchestration fallback)
         selected_model, routing_reason = router.route(user_message, requested_model)
 
         if ENABLE_LOGGING:
@@ -167,10 +210,13 @@ async def chat_completion(request: Request):
             "stream": payload.get("stream", False),
             "options": {
                 "temperature": payload.get("temperature", 0.7),
-                "top_p": payload.get("top_p", 0.9),
-                "max_tokens": payload.get("max_tokens", 2048),
+                "num_predict": payload.get("max_tokens", 2048),
             },
         }
+
+        # Add top_p if provided (optional for Ollama)
+        if "top_p" in payload:
+            ollama_payload["options"]["top_p"] = payload["top_p"]
 
         async with httpx.AsyncClient(timeout=120.0) as client:
             if ollama_payload["stream"] and ENABLE_STREAMING:
@@ -180,35 +226,39 @@ async def chat_completion(request: Request):
                 )
 
                 async def generate():
-                    async for chunk in response.aiter_lines():
-                        if chunk:
-                            try:
-                                data = json.loads(chunk)
-                                # Convert to OpenAI format
-                                openai_chunk = {
-                                    "id": f"chatcmpl-{int(time.time())}",
-                                    "object": "chat.completion.chunk",
-                                    "created": int(time.time()),
-                                    "model": selected_model,
-                                    "choices": [
-                                        {
-                                            "index": 0,
-                                            "delta": {
-                                                "content": data.get("message", {}).get(
-                                                    "content", ""
-                                                )
-                                            },
-                                            "finish_reason": "stop" if data.get("done") else None,
-                                        }
-                                    ],
-                                }
-                                yield f"data: {json.dumps(openai_chunk)}\n\n"
+                    buffer = ""
+                    async for chunk in response.aiter_bytes():
+                        buffer += chunk.decode('utf-8')
+                        while '\n' in buffer:
+                            line, buffer = buffer.split('\n', 1)
+                            if line.strip():
+                                try:
+                                    data = json.loads(line)
+                                    # Convert to OpenAI format
+                                    openai_chunk = {
+                                        "id": f"chatcmpl-{int(time.time())}",
+                                        "object": "chat.completion.chunk",
+                                        "created": int(time.time()),
+                                        "model": selected_model,
+                                        "choices": [
+                                            {
+                                                "index": 0,
+                                                "delta": {
+                                                    "content": data.get("message", {}).get(
+                                                        "content", ""
+                                                    )
+                                                },
+                                                "finish_reason": "stop" if data.get("done") else None,
+                                            }
+                                        ],
+                                    }
+                                    yield f"data: {json.dumps(openai_chunk)}\n\n"
 
-                                if data.get("done"):
-                                    yield "data: [DONE]\n\n"
-                                    break
-                            except json.JSONDecodeError:
-                                continue
+                                    if data.get("done"):
+                                        yield "data: [DONE]\n\n"
+                                        break
+                                except json.JSONDecodeError:
+                                    continue
 
                 return StreamingResponse(
                     generate(),
@@ -282,6 +332,24 @@ async def test_routing(request: Request):
     model, reason = router.route(prompt)
 
     return {"prompt": prompt, "selected_model": model, "reason": reason}
+
+
+@app.post("/gateway/shutdown")
+async def shutdown_server():
+    """Gracefully shutdown the gateway server"""
+    logger.info("🛑 Shutdown requested via API")
+
+    def shutdown():
+        import signal
+        import sys
+        logger.info("Shutting down server...")
+        os.kill(os.getpid(), signal.SIGTERM)
+
+    # Schedule shutdown after response is sent
+    import threading
+    threading.Timer(1.0, shutdown).start()
+
+    return {"status": "shutting_down", "message": "Server will stop in 1 second"}
 
 
 # Mount Pilot Studio (must be AFTER all API routes to avoid conflicts)
