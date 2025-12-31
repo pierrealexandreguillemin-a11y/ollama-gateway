@@ -21,7 +21,7 @@
     {
       "title": "💻 DeepSeek Coder",
       "provider": "openai",
-      "model": "deepseek-coder-v2:latest",
+      "model": "qwen2.5-coder:7b:latest",
       "apiBase": "http://localhost:4000/v1",
       "apiKey": "not-needed",
       "contextLength": 16384,
@@ -30,7 +30,7 @@
     {
       "title": "♟️ Chess Expert",
       "provider": "openai",
-      "model": "deepseek-chess:latest",
+      "model": "mistral:latest",
       "apiBase": "http://localhost:4000/v1",
       "apiKey": "not-needed",
       "contextLength": 8192,
@@ -76,7 +76,7 @@
   "tabAutocompleteModel": {
     "title": "Autocomplete",
     "provider": "openai",
-    "model": "deepseek-coder-v2:latest",
+    "model": "qwen2.5-coder:7b:latest",
     "apiBase": "http://localhost:4000/v1",
     "apiKey": "not-needed"
   },

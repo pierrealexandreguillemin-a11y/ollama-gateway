@@ -50,8 +50,8 @@ class TaskOrchestrator:
         decomposition_prompt = f"""You are a task orchestration AI. Break down this complex request into 2-4 specific subtasks that can be handled by specialized models.
 
 Available specialists:
-- deepseek-coder-v2: Coding, debugging, algorithms
-- deepseek-chess: Chess strategy, game analysis
+- qwen2.5-coder:7b: Coding, debugging, algorithms
+- mistral: Chess strategy, game analysis
 - qwen2.5: Translation, multilingual tasks
 - gemma2: Creative writing, stories
 - mistral: General knowledge, explanations
