@@ -10,7 +10,7 @@ Votre gateway OpenAI-compatible avec routing intelligent est **prêt à l'emploi
 
 ✅ Gateway installé dans `C:\Dev\ollama-gateway`
 ✅ Dépendances Python installées
-✅ Configuration adaptée à vos 9 modèles locaux
+✅ Configuration adaptée à vos 5 modèles locaux
 ✅ Testé et fonctionnel
 ✅ Routing intelligent validé
 
@@ -55,6 +55,7 @@ curl -X POST http://localhost:4000/gateway/route \
 ```
 
 Ou lancez le script de test complet :
+
 ```bash
 ./test-gateway.sh
 ```
@@ -69,12 +70,14 @@ Ou lancez le script de test complet :
 
 ```json
 {
-  "models": [{
-    "title": "Ollama Local (Auto)",
-    "provider": "openai",
-    "model": "auto",
-    "apiBase": "http://localhost:4000/v1"
-  }]
+  "models": [
+    {
+      "title": "Ollama Local (Auto)",
+      "provider": "openai",
+      "model": "auto",
+      "apiBase": "http://localhost:4000/v1"
+    }
+  ]
 }
 ```
 
@@ -84,14 +87,13 @@ Ou lancez le script de test complet :
 
 ### Routing Automatique
 
-| Votre Question | Modèle Utilisé | Pourquoi |
-|---------------|----------------|----------|
-| Code Python/JS | deepseek-coder-v2 | Expert code |
-| Échecs | deepseek-chess | Expert chess |
-| Traduction | qwen2.5 | Multilingual |
-| Créativité | gemma2 | Creative |
-| Rapide | llama3.2 | Fast |
-| Autre | mistral | General |
+| Votre Question | Modèle Utilisé              | Pourquoi     |
+| -------------- | --------------------------- | ------------ |
+| Code Python/JS | qwen2.5-coder:7b            | Expert code  |
+| Traduction     | huihui_ai/qwen3-abliterated | Multilingual |
+| Créativité     | gemma2                      | Creative     |
+| Rapide         | llama3.2                    | Fast         |
+| Autre          | mistral                     | General      |
 
 ### Économies
 
@@ -122,12 +124,14 @@ ollama-gateway/
 ## 🎬 Prochaines Étapes
 
 ### P0 (FAIT) ✅
+
 - Gateway OpenAI-compatible
 - Routing intelligent automatique
-- Configuration vos 9 modèles
+- Configuration vos 5 modèles
 - Testé et validé
 
 ### P1 (À DÉFINIR ENSEMBLE)
+
 - Dashboard autonome
 - Interface conversationnelle
 - Visualisation temps réel
@@ -140,14 +144,17 @@ ollama-gateway/
 ## 🆘 Troubleshooting
 
 **Gateway ne démarre pas** :
+
 - Vérifier Python 3.9+ installé
 - Vérifier Ollama en cours (`ollama serve`)
 
 **Pas de réponse** :
+
 - Vérifier logs dans le terminal
 - Tester Ollama : `ollama run mistral "Hello"`
 
 **Modèle non trouvé** :
+
 - Vérifier modèles installés : `ollama list`
 - Adapter `config.json` si nécessaire
 
@@ -156,12 +163,12 @@ ollama-gateway/
 ## 📞 Support
 
 Gateway configuré spécifiquement pour vos modèles :
-- deepseek-coder-v2
-- deepseek-chess
-- gemma2, gemma2-chess
-- qwen2.5, qwen2.5-chess
-- llama3.2, llama3.2-chess
-- mistral
+
+- qwen2.5-coder:7b (coding)
+- gemma2 (creative)
+- huihui_ai/qwen3-abliterated (multilingual)
+- llama3.2 (fast)
+- mistral (general, default)
 
 **Prêt pour production locale immédiate** ✅
 

@@ -10,6 +10,7 @@
 ## Executive Summary
 
 Pilot Studio is now **fully accessible** to users with disabilities, including:
+
 - ✅ Screen reader users (VoiceOver, NVDA, JAWS, TalkBack)
 - ✅ Keyboard-only navigation
 - ✅ Low vision users (high contrast, zoom support)
@@ -23,54 +24,54 @@ Pilot Studio is now **fully accessible** to users with disabilities, including:
 
 ### 1. Perceivable
 
-| Criterion | Status | Implementation |
-|-----------|--------|----------------|
-| **1.1.1 Non-text Content** | ✅ Pass | All emoji buttons have `aria-label` attributes |
-| **1.3.1 Info and Relationships** | ✅ Pass | Semantic HTML (`<main>`, `<aside>`, `<nav>`, `<header>`) |
-| **1.3.2 Meaningful Sequence** | ✅ Pass | Logical tab order, proper heading hierarchy |
-| **1.3.3 Sensory Characteristics** | ✅ Pass | Instructions don't rely solely on visual cues |
-| **1.4.3 Contrast (Minimum)** | ✅ Pass | All text >4.5:1 contrast ratio in both themes |
-| **1.4.4 Resize Text** | ✅ Pass | Supports 200% zoom without loss of functionality |
-| **1.4.10 Reflow** | ✅ Pass | Responsive layout, no horizontal scrolling |
-| **1.4.11 Non-text Contrast** | ✅ Pass | UI controls have >3:1 contrast |
-| **1.4.12 Text Spacing** | ✅ Pass | Layout adapts to user CSS modifications |
-| **1.4.13 Content on Hover** | ✅ Pass | No critical content hidden in hover-only states |
+| Criterion                         | Status  | Implementation                                           |
+| --------------------------------- | ------- | -------------------------------------------------------- |
+| **1.1.1 Non-text Content**        | ✅ Pass | All emoji buttons have `aria-label` attributes           |
+| **1.3.1 Info and Relationships**  | ✅ Pass | Semantic HTML (`<main>`, `<aside>`, `<nav>`, `<header>`) |
+| **1.3.2 Meaningful Sequence**     | ✅ Pass | Logical tab order, proper heading hierarchy              |
+| **1.3.3 Sensory Characteristics** | ✅ Pass | Instructions don't rely solely on visual cues            |
+| **1.4.3 Contrast (Minimum)**      | ✅ Pass | All text >4.5:1 contrast ratio in both themes            |
+| **1.4.4 Resize Text**             | ✅ Pass | Supports 200% zoom without loss of functionality         |
+| **1.4.10 Reflow**                 | ✅ Pass | Responsive layout, no horizontal scrolling               |
+| **1.4.11 Non-text Contrast**      | ✅ Pass | UI controls have >3:1 contrast                           |
+| **1.4.12 Text Spacing**           | ✅ Pass | Layout adapts to user CSS modifications                  |
+| **1.4.13 Content on Hover**       | ✅ Pass | No critical content hidden in hover-only states          |
 
 ### 2. Operable
 
-| Criterion | Status | Implementation |
-|-----------|--------|----------------|
-| **2.1.1 Keyboard** | ✅ Pass | All functionality accessible via keyboard |
-| **2.1.2 No Keyboard Trap** | ✅ Pass | Focus can move freely through all elements |
-| **2.1.4 Character Key Shortcuts** | ✅ Pass | Ctrl+Enter documented, doesn't conflict |
-| **2.4.1 Bypass Blocks** | ✅ Pass | Semantic landmarks for screen reader navigation |
-| **2.4.2 Page Titled** | ✅ Pass | `<title>Ollama Pilot Studio</title>` |
-| **2.4.3 Focus Order** | ✅ Pass | Logical tab sequence (sidebar → header → messages → input) |
-| **2.4.4 Link Purpose** | ✅ Pass | All interactive elements have descriptive labels |
-| **2.4.6 Headings and Labels** | ✅ Pass | Clear `<h1>`, `<h2>`, `<label>` structure |
-| **2.4.7 Focus Visible** | ✅ Pass | 2px solid accent outline on `:focus-visible` |
-| **2.5.3 Label in Name** | ✅ Pass | `aria-label` matches visible text where applicable |
+| Criterion                         | Status  | Implementation                                             |
+| --------------------------------- | ------- | ---------------------------------------------------------- |
+| **2.1.1 Keyboard**                | ✅ Pass | All functionality accessible via keyboard                  |
+| **2.1.2 No Keyboard Trap**        | ✅ Pass | Focus can move freely through all elements                 |
+| **2.1.4 Character Key Shortcuts** | ✅ Pass | Ctrl+Enter documented, doesn't conflict                    |
+| **2.4.1 Bypass Blocks**           | ✅ Pass | Semantic landmarks for screen reader navigation            |
+| **2.4.2 Page Titled**             | ✅ Pass | `<title>Ollama Pilot Studio</title>`                       |
+| **2.4.3 Focus Order**             | ✅ Pass | Logical tab sequence (sidebar → header → messages → input) |
+| **2.4.4 Link Purpose**            | ✅ Pass | All interactive elements have descriptive labels           |
+| **2.4.6 Headings and Labels**     | ✅ Pass | Clear `<h1>`, `<h2>`, `<label>` structure                  |
+| **2.4.7 Focus Visible**           | ✅ Pass | 2px solid accent outline on `:focus-visible`               |
+| **2.5.3 Label in Name**           | ✅ Pass | `aria-label` matches visible text where applicable         |
 
 ### 3. Understandable
 
-| Criterion | Status | Implementation |
-|-----------|--------|----------------|
-| **3.1.1 Language of Page** | ✅ Pass | `<html lang="fr">` |
-| **3.2.1 On Focus** | ✅ Pass | No unexpected context changes on focus |
-| **3.2.2 On Input** | ✅ Pass | Forms don't auto-submit without warning |
-| **3.2.3 Consistent Navigation** | ✅ Pass | UI layout consistent across all states |
-| **3.2.4 Consistent Identification** | ✅ Pass | Same icons/labels for same functions |
-| **3.3.1 Error Identification** | ✅ Pass | API errors announced via ARIA live region |
-| **3.3.2 Labels or Instructions** | ✅ Pass | All inputs have explicit labels |
-| **3.3.3 Error Suggestion** | ✅ Pass | Error messages provide actionable guidance |
+| Criterion                           | Status  | Implementation                             |
+| ----------------------------------- | ------- | ------------------------------------------ |
+| **3.1.1 Language of Page**          | ✅ Pass | `<html lang="fr">`                         |
+| **3.2.1 On Focus**                  | ✅ Pass | No unexpected context changes on focus     |
+| **3.2.2 On Input**                  | ✅ Pass | Forms don't auto-submit without warning    |
+| **3.2.3 Consistent Navigation**     | ✅ Pass | UI layout consistent across all states     |
+| **3.2.4 Consistent Identification** | ✅ Pass | Same icons/labels for same functions       |
+| **3.3.1 Error Identification**      | ✅ Pass | API errors announced via ARIA live region  |
+| **3.3.2 Labels or Instructions**    | ✅ Pass | All inputs have explicit labels            |
+| **3.3.3 Error Suggestion**          | ✅ Pass | Error messages provide actionable guidance |
 
 ### 4. Robust
 
-| Criterion | Status | Implementation |
-|-----------|--------|----------------|
-| **4.1.1 Parsing** | ✅ Pass | Valid HTML5, no duplicate IDs |
-| **4.1.2 Name, Role, Value** | ✅ Pass | All controls have proper ARIA attributes |
-| **4.1.3 Status Messages** | ✅ Pass | `role="status"` and `aria-live="polite"` used |
+| Criterion                   | Status  | Implementation                                |
+| --------------------------- | ------- | --------------------------------------------- |
+| **4.1.1 Parsing**           | ✅ Pass | Valid HTML5, no duplicate IDs                 |
+| **4.1.2 Name, Role, Value** | ✅ Pass | All controls have proper ARIA attributes      |
+| **4.1.3 Status Messages**   | ✅ Pass | `role="status"` and `aria-live="polite"` used |
 
 ---
 
@@ -85,11 +86,12 @@ Pilot Studio is now **fully accessible** to users with disabilities, including:
 ```
 
 **Announces**:
-- Model availability on load: "9 modèles d'IA disponibles"
+
+- Model availability on load: "5 modèles d'IA disponibles"
 - Project creation: "Nouveau projet créé : Chess-app"
 - Project switching: "Projet actif : Glicko-2 Implementation"
-- Response start: "L'assistant deepseek-coder-v2 répond…"
-- Response completion: "Réponse complète reçue de deepseek-coder-v2"
+- Response start: "L'assistant qwen2.5-coder:7b répond…"
+- Response completion: "Réponse complète reçue de qwen2.5-coder:7b"
 - Gateway status: "Gateway Ollama connecté"
 - Theme changes: "Thème sombre activé"
 - Errors: "Erreur : API error 503"
@@ -100,21 +102,23 @@ Pilot Studio is now **fully accessible** to users with disabilities, including:
 
 All emoji-only buttons now have descriptive `aria-label`:
 
-| Button | Visual | aria-label |
-|--------|--------|------------|
-| New Project | ＋ | "Créer un nouveau projet" |
-| Send | ➤ | "Envoyer le message" (updates to "Envoi en cours…" when disabled) |
-| Theme Toggle | ☀️/🌙 | "Basculer entre mode sombre et mode clair" |
+| Button       | Visual | aria-label                                                        |
+| ------------ | ------ | ----------------------------------------------------------------- |
+| New Project  | ＋     | "Créer un nouveau projet"                                         |
+| Send         | ➤      | "Envoyer le message" (updates to "Envoi en cours…" when disabled) |
+| Theme Toggle | ☀️/🌙  | "Basculer entre mode sombre et mode clair"                        |
 
 ### 🎹 Keyboard Navigation
 
 **Project Items**: `app.js:78-87`
+
 - `role="button"` - Announces as clickable
 - `tabindex="0"` - Included in tab order
 - `Enter` or `Space` - Activates project switch
 - `aria-current="true"` - Indicates active project
 
 **Tab Order**:
+
 1. "New Project" button
 2. Project list items (navigable with Tab/Arrow keys)
 3. Theme toggle
@@ -126,35 +130,44 @@ All emoji-only buttons now have descriptive `aria-label`:
 ### 📊 Status Indicators
 
 **Gateway Status**: `index.html:23`
+
 ```html
-<span id="status" role="status" aria-live="polite" aria-label="Statut du gateway : hors ligne">●</span>
+<span id="status" role="status" aria-live="polite" aria-label="Statut du gateway : hors ligne"
+  >●</span
+>
 ```
 
 Updates dynamically:
+
 - Offline: "Statut du gateway : hors ligne" (red)
 - Online: "Statut du gateway : en ligne" (green)
 
 ### 🗣️ Screen Reader Optimizations
 
 **Messages Container**: `index.html:36`
+
 ```html
 <div id="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
 ```
 
 **Individual Messages**: `app.js:124`
+
 ```html
 <div role="article" aria-label="Assistant : message 3">...</div>
 ```
 
 **Hidden Preview Text**: `app.js:73`
+
 ```html
 <div class="project-preview" aria-hidden="true">...</div>
 ```
+
 Prevents duplicate announcements of truncated preview text.
 
 ### 🎨 Visual Focus Indicators
 
 **CSS**: `style.css:37-46`
+
 ```css
 *:focus-visible {
   outline: 2px solid var(--accent);
@@ -163,6 +176,7 @@ Prevents duplicate announcements of truncated preview text.
 ```
 
 Visible blue outline appears on:
+
 - All buttons
 - Project items
 - Model selector
@@ -172,6 +186,7 @@ Visible blue outline appears on:
 ### 📝 Form Labels
 
 **Explicit Labels**: `index.html:32-33, 39-40`
+
 ```html
 <label for="model-select" class="sr-only">Sélectionner le modèle d'IA</label>
 <label for="user-input" class="sr-only">Votre message à l'assistant</label>
@@ -182,6 +197,7 @@ Screen readers announce label + control type.
 ### 🔇 Screen-Reader-Only Content
 
 **`.sr-only` Utility**: `style.css:24-34`
+
 ```css
 .sr-only {
   position: absolute;
@@ -252,17 +268,17 @@ Content visible to assistive tech, invisible visually.
 
 ## What Changed vs. Original Version
 
-| Component | Before (v1.1.0) | After (v1.2.0) |
-|-----------|-----------------|----------------|
-| **ARIA Labels** | Missing on emoji buttons | ✅ All labeled |
-| **Live Regions** | None | ✅ Implemented with throttling |
-| **Focus States** | Browser defaults | ✅ Custom 2px accent outline |
-| **Keyboard Nav** | Partial (missing on projects) | ✅ Full support with role="button" |
-| **Status Announce** | Silent updates | ✅ Announces status changes |
-| **Semantic HTML** | Divs only | ✅ `<main>`, `<aside>`, `<nav>` |
-| **Form Labels** | Implicit (placeholder) | ✅ Explicit `<label>` elements |
-| **Project Active State** | Visual only | ✅ `aria-current="true"` |
-| **Streaming Spam** | N/A (not streaming yet) | ✅ Prevented (announce start/end only) |
+| Component                | Before (v1.1.0)               | After (v1.2.0)                         |
+| ------------------------ | ----------------------------- | -------------------------------------- |
+| **ARIA Labels**          | Missing on emoji buttons      | ✅ All labeled                         |
+| **Live Regions**         | None                          | ✅ Implemented with throttling         |
+| **Focus States**         | Browser defaults              | ✅ Custom 2px accent outline           |
+| **Keyboard Nav**         | Partial (missing on projects) | ✅ Full support with role="button"     |
+| **Status Announce**      | Silent updates                | ✅ Announces status changes            |
+| **Semantic HTML**        | Divs only                     | ✅ `<main>`, `<aside>`, `<nav>`        |
+| **Form Labels**          | Implicit (placeholder)        | ✅ Explicit `<label>` elements         |
+| **Project Active State** | Visual only                   | ✅ `aria-current="true"`               |
+| **Streaming Spam**       | N/A (not streaming yet)       | ✅ Prevented (announce start/end only) |
 
 **Visual Changes**: **ZERO**
 **Functional Impact on Sighted Users**: **NONE**
@@ -277,16 +293,19 @@ Content visible to assistive tech, invisible visually.
 When adding new interactive elements:
 
 1. **Buttons without text** → Add `aria-label`
+
    ```html
    <button aria-label="Clear conversation">🗑️</button>
    ```
 
 2. **Dynamic updates** → Use live region
+
    ```javascript
-   announceToScreenReader("Conversation cleared");
+   announceToScreenReader('Conversation cleared');
    ```
 
 3. **Custom controls** → Add keyboard support
+
    ```javascript
    element.addEventListener('keydown', e => {
      if (e.key === 'Enter' || e.key === ' ') {
@@ -298,8 +317,7 @@ When adding new interactive elements:
 
 4. **Form inputs** → Explicit labels
    ```html
-   <label for="input-id">Label text</label>
-   <input id="input-id" />
+   <label for="input-id">Label text</label> <input id="input-id" />
    ```
 
 ### Testing New Changes

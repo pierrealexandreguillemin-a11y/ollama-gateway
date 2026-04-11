@@ -8,20 +8,20 @@
 
 ## 📦 Python Environment
 
-| Component | Version | Required | Status |
-|-----------|---------|----------|--------|
-| **Python** | 3.13.6 | ≥3.9 | ✅ |
-| **pip** | 25.2 | ≥21.0 | ✅ |
+| Component  | Version | Required | Status |
+| ---------- | ------- | -------- | ------ |
+| **Python** | 3.13.6  | ≥3.9     | ✅     |
+| **pip**    | 25.2    | ≥21.0    | ✅     |
 
 ## 🔧 Production Dependencies
 
-| Package | Installed | Required | Status |
-|---------|-----------|----------|--------|
-| **fastapi** | 0.121.2 | ≥0.111.0 | ✅ |
-| **uvicorn** | 0.38.0 | ≥0.30.0 | ✅ |
-| **httpx** | 0.28.1 | ≥0.27.0 | ✅ |
-| **pydantic** | 2.10.6 | ≥2.7.0 | ✅ |
-| **python-dotenv** | 1.0.1 | ≥1.0.0 | ✅ |
+| Package           | Installed | Required | Status |
+| ----------------- | --------- | -------- | ------ |
+| **fastapi**       | 0.121.2   | ≥0.111.0 | ✅     |
+| **uvicorn**       | 0.38.0    | ≥0.30.0  | ✅     |
+| **httpx**         | 0.28.1    | ≥0.27.0  | ✅     |
+| **pydantic**      | 2.10.6    | ≥2.7.0   | ✅     |
+| **python-dotenv** | 1.0.1     | ≥1.0.0   | ✅     |
 
 **Verdict**: ✅ All production dependencies up-to-date and compatible
 
@@ -29,15 +29,15 @@
 
 ## ⚡ Code Quality Tools
 
-| Tool | Version | Required | Purpose | Status |
-|------|---------|----------|---------|--------|
-| **Black** | 25.9.0 | ≥24.1.1 | Python formatter | ✅ |
-| **Flake8** | 7.3.0 | ≥7.0.0 | Python linter (PEP 8) | ✅ |
-| **isort** | 7.0.0 | ≥5.13.2 | Import sorter | ✅ |
-| **mypy** | 1.18.2 | ≥1.8.0 | Type checker | ✅ |
-| **pytest** | 8.4.2 | ≥7.4.4 | Testing framework | ✅ |
-| **pytest-cov** | 7.0.0 | ≥4.1.0 | Coverage plugin | ✅ |
-| **pytest-asyncio** | 1.2.0 | ≥0.23.3 | Async testing | ✅ |
+| Tool               | Version | Required | Purpose               | Status |
+| ------------------ | ------- | -------- | --------------------- | ------ |
+| **Black**          | 25.9.0  | ≥24.1.1  | Python formatter      | ✅     |
+| **Flake8**         | 7.3.0   | ≥7.0.0   | Python linter (PEP 8) | ✅     |
+| **isort**          | 7.0.0   | ≥5.13.2  | Import sorter         | ✅     |
+| **mypy**           | 1.18.2  | ≥1.8.0   | Type checker          | ✅     |
+| **pytest**         | 8.4.2   | ≥7.4.4   | Testing framework     | ✅     |
+| **pytest-cov**     | 7.0.0   | ≥4.1.0   | Coverage plugin       | ✅     |
+| **pytest-asyncio** | 1.2.0   | ≥0.23.3  | Async testing         | ✅     |
 
 **Verdict**: ✅ All dev tools installed and operational
 
@@ -60,11 +60,11 @@
 
 ```json
 {
-    "status": "healthy",
-    "ollama_connected": true,
-    "ollama_models_count": 9,
-    "configured_models": 9,
-    "routing_enabled": true
+  "status": "healthy",
+  "ollama_connected": true,
+  "ollama_models_count": 5,
+  "configured_models": 5,
+  "routing_enabled": true
 }
 ```
 
@@ -72,15 +72,15 @@
 
 ### Available Endpoints
 
-| Endpoint | Status | Response Time | Notes |
-|----------|--------|---------------|-------|
-| `/` | ✅ 200 | <50ms | Redirects to /studio/ |
-| `/health` | ✅ 200 | <100ms | Health check with Ollama status |
-| `/v1/models` | ✅ 200 | <150ms | Lists 9 local models |
-| `/v1/chat/completions` | ✅ 200 | Streaming | OpenAI-compatible API |
-| `/studio/` | ✅ 200 | <50ms | Dashboard loads correctly |
-| `/gateway/models` | ✅ 200 | <100ms | Gateway-specific model info |
-| `/gateway/route` | ✅ 200 | <50ms | Test routing endpoint |
+| Endpoint               | Status | Response Time | Notes                           |
+| ---------------------- | ------ | ------------- | ------------------------------- |
+| `/`                    | ✅ 200 | <50ms         | Redirects to /studio/           |
+| `/health`              | ✅ 200 | <100ms        | Health check with Ollama status |
+| `/v1/models`           | ✅ 200 | <150ms        | Lists 9 local models            |
+| `/v1/chat/completions` | ✅ 200 | Streaming     | OpenAI-compatible API           |
+| `/studio/`             | ✅ 200 | <50ms         | Dashboard loads correctly       |
+| `/gateway/models`      | ✅ 200 | <100ms        | Gateway-specific model info     |
+| `/gateway/route`       | ✅ 200 | <50ms         | Test routing endpoint           |
 
 **Verdict**: ✅ All endpoints operational
 
@@ -88,22 +88,18 @@
 
 ## 🤖 Configured Models
 
-**Total**: 9 local models
+**Total**: 5 local models
 **Source**: Ollama (localhost:11434)
 
-| Model | Role | Priority | Tags Count | Status |
-|-------|------|----------|------------|--------|
-| deepseek-coder-v2:latest | coding | 1 | 15 | ✅ |
-| deepseek-chess:latest | chess | 1 | 12 | ✅ |
-| gemma2:latest | creative | 2 | 8 | ✅ |
-| gemma2-chess:latest | chess_analysis | 2 | 3 | ✅ |
-| qwen2.5:latest | multilingual | 2 | 7 | ✅ |
-| qwen2.5-chess:latest | chess_training | 3 | 2 | ✅ |
-| llama3.2:latest | fast | 3 | 4 | ✅ |
-| llama3.2-chess:latest | chess_quick | 3 | 1 | ✅ |
-| mistral:latest | general | 1 | 0 | ✅ |
+| Model                              | Role         | Priority | Tags Count | Status |
+| ---------------------------------- | ------------ | -------- | ---------- | ------ |
+| qwen2.5-coder:7b                   | coding       | 1        | 15         | ✅     |
+| gemma2:latest                      | creative     | 2        | 8          | ✅     |
+| huihui_ai/qwen3-abliterated:latest | multilingual | 2        | 8          | ✅     |
+| llama3.2:latest                    | fast         | 3        | 4          | ✅     |
+| mistral:latest                     | general      | 1        | 0          | ✅     |
 
-**Verdict**: ✅ All 9 models detected and configured
+**Verdict**: ✅ All 5 models detected and configured
 
 ---
 
@@ -114,13 +110,14 @@
 
 ### ARIA Implementation
 
-| Component | ARIA Attributes | Status |
-|-----------|-----------------|--------|
-| **index.html** | 11 attributes | ✅ |
-| **app.js** | 10 announcements | ✅ |
-| **style.css** | .sr-only utility | ✅ |
+| Component      | ARIA Attributes  | Status |
+| -------------- | ---------------- | ------ |
+| **index.html** | 11 attributes    | ✅     |
+| **app.js**     | 10 announcements | ✅     |
+| **style.css**  | .sr-only utility | ✅     |
 
 **Detailed Checks**:
+
 - ✅ Live region for screen reader announcements
 - ✅ aria-label on all emoji buttons (theme, send, new project)
 - ✅ aria-live="polite" on status indicator
@@ -156,6 +153,7 @@ $ flake8 main.py router.py
 ```
 
 **Checks Performed**:
+
 - ✅ Line length (max 100 chars)
 - ✅ Import organization
 - ✅ Unused variables
@@ -209,17 +207,17 @@ f671583 - Initial commit: Ollama Gateway v1.0.0
 
 ## 📚 Documentation
 
-| File | Size | Purpose | Status |
-|------|------|---------|--------|
-| README.md | 4.7K | Project overview | ✅ |
-| START-HERE.md | 3.6K | Quick start guide | ✅ |
-| SETUP-CLAUDE-CODE.md | 3.2K | IDE integration | ✅ |
-| A11Y-COMPLIANCE.md | 11K | Accessibility audit | ✅ |
-| CODE-QUALITY.md | 9.1K | Quality system docs | ✅ |
-| STUDIO-READY.md | 3.5K | Dashboard deployment | ✅ |
-| CHANGELOG.md | 1.9K | Version history | ✅ |
-| CONTRIBUTING.md | 2.5K | Contribution guide | ✅ |
-| GITHUB-SETUP.md | 4.0K | GitHub publishing | ✅ |
+| File                 | Size | Purpose              | Status |
+| -------------------- | ---- | -------------------- | ------ |
+| README.md            | 4.7K | Project overview     | ✅     |
+| START-HERE.md        | 3.6K | Quick start guide    | ✅     |
+| SETUP-CLAUDE-CODE.md | 3.2K | IDE integration      | ✅     |
+| A11Y-COMPLIANCE.md   | 11K  | Accessibility audit  | ✅     |
+| CODE-QUALITY.md      | 9.1K | Quality system docs  | ✅     |
+| STUDIO-READY.md      | 3.5K | Dashboard deployment | ✅     |
+| CHANGELOG.md         | 1.9K | Version history      | ✅     |
+| CONTRIBUTING.md      | 2.5K | Contribution guide   | ✅     |
+| GITHUB-SETUP.md      | 4.0K | GitHub publishing    | ✅     |
 
 **Total Documentation**: 9 files, 43.8K
 **Verdict**: ✅ Comprehensive documentation
@@ -228,19 +226,19 @@ f671583 - Initial commit: Ollama Gateway v1.0.0
 
 ## 🛠️ Configuration Files
 
-| File | Purpose | Validation | Status |
-|------|---------|------------|--------|
-| **.pre-commit-config.yaml** | Pre-commit hooks | 12 hooks configured | ✅ |
-| **.eslintrc.json** | ESLint rules | Valid JSON | ✅ |
-| **.prettierrc** | Prettier config | Valid JSON | ✅ |
-| **.flake8** | Flake8 settings | Valid INI | ✅ |
-| **.commitlintrc.json** | Commit message rules | Valid JSON | ✅ |
-| **pyproject.toml** | Python tools config | Valid TOML | ✅ |
-| **config.json** | Gateway config | Valid JSON, 9 models | ✅ |
-| **.env** | Environment variables | 4 vars configured | ✅ |
-| **requirements.txt** | Production deps | 5 packages | ✅ |
-| **requirements-dev.txt** | Dev deps | 8+ packages | ✅ |
-| **Makefile** | Quality commands | 15+ targets | ✅ |
+| File                        | Purpose               | Validation           | Status |
+| --------------------------- | --------------------- | -------------------- | ------ |
+| **.pre-commit-config.yaml** | Pre-commit hooks      | 12 hooks configured  | ✅     |
+| **.eslintrc.json**          | ESLint rules          | Valid JSON           | ✅     |
+| **.prettierrc**             | Prettier config       | Valid JSON           | ✅     |
+| **.flake8**                 | Flake8 settings       | Valid INI            | ✅     |
+| **.commitlintrc.json**      | Commit message rules  | Valid JSON           | ✅     |
+| **pyproject.toml**          | Python tools config   | Valid TOML           | ✅     |
+| **config.json**             | Gateway config        | Valid JSON, 9 models | ✅     |
+| **.env**                    | Environment variables | 4 vars configured    | ✅     |
+| **requirements.txt**        | Production deps       | 5 packages           | ✅     |
+| **requirements-dev.txt**    | Dev deps              | 8+ packages          | ✅     |
+| **Makefile**                | Quality commands      | 15+ targets          | ✅     |
 
 **Verdict**: ✅ All configurations valid and operational
 
@@ -248,13 +246,14 @@ f671583 - Initial commit: Ollama Gateway v1.0.0
 
 ## 🎨 Frontend Assets (Studio Dashboard)
 
-| File | Lines | Features | Status |
-|------|-------|----------|--------|
-| **studio/index.html** | 52 | ARIA labels, semantic HTML | ✅ |
-| **studio/app.js** | 262 | Live regions, keyboard nav | ✅ |
-| **studio/style.css** | 82 | .sr-only, focus states | ✅ |
+| File                  | Lines | Features                   | Status |
+| --------------------- | ----- | -------------------------- | ------ |
+| **studio/index.html** | 52    | ARIA labels, semantic HTML | ✅     |
+| **studio/app.js**     | 262   | Live regions, keyboard nav | ✅     |
+| **studio/style.css**  | 82    | .sr-only, focus states     | ✅     |
 
 **Features Verified**:
+
 - ✅ Project management (LocalStorage)
 - ✅ Multi-model selection
 - ✅ Streaming responses (SSE)
@@ -285,18 +284,18 @@ f671583 - Initial commit: Ollama Gateway v1.0.0
 
 ## 📊 Overall System Status
 
-| Category | Score | Status |
-|----------|-------|--------|
-| **Production Dependencies** | 100% | ✅ |
-| **Code Quality Tools** | 100% | ✅ |
-| **Gateway Health** | 100% | ✅ |
-| **Model Configuration** | 100% (9/9) | ✅ |
-| **Accessibility** | 100% WCAG AA | ✅ |
-| **Code Compliance** | 100% (0 violations) | ✅ |
-| **Documentation** | 100% | ✅ |
-| **Configuration** | 100% | ✅ |
-| **Frontend** | 100% | ✅ |
-| **Security** | Pass | ✅ |
+| Category                    | Score               | Status |
+| --------------------------- | ------------------- | ------ |
+| **Production Dependencies** | 100%                | ✅     |
+| **Code Quality Tools**      | 100%                | ✅     |
+| **Gateway Health**          | 100%                | ✅     |
+| **Model Configuration**     | 100% (5/5)          | ✅     |
+| **Accessibility**           | 100% WCAG AA        | ✅     |
+| **Code Compliance**         | 100% (0 violations) | ✅     |
+| **Documentation**           | 100%                | ✅     |
+| **Configuration**           | 100%                | ✅     |
+| **Frontend**                | 100%                | ✅     |
+| **Security**                | Pass                | ✅     |
 
 ---
 
@@ -305,9 +304,10 @@ f671583 - Initial commit: Ollama Gateway v1.0.0
 **OVERALL STATUS**: 🟢 **PRODUCTION READY**
 
 All components validated and operational:
+
 - ✅ Python 3.13.6 with all required packages
 - ✅ Gateway running on port 4000
-- ✅ 9 local Ollama models configured
+- ✅ 5 local Ollama models configured
 - ✅ Studio dashboard accessible and WCAG AA compliant
 - ✅ Code quality at 100% (0 violations)
 - ✅ All endpoints responding correctly
@@ -316,6 +316,7 @@ All components validated and operational:
 - ✅ Security best practices implemented
 
 **Recommendations**:
+
 - ✅ System ready for daily use
 - ✅ Pre-commit hooks can be installed: `pre-commit install`
 - ✅ Dev dependencies can be installed: `pip install -r requirements-dev.txt`

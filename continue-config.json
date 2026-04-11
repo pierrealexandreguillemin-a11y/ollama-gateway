@@ -19,27 +19,18 @@
       "description": "Intelligent routing to the best model based on your question"
     },
     {
-      "title": "💻 DeepSeek Coder",
+      "title": "💻 Qwen Coder",
       "provider": "openai",
-      "model": "qwen2.5-coder:7b:latest",
+      "model": "qwen2.5-coder:7b",
       "apiBase": "http://localhost:4000/v1",
       "apiKey": "not-needed",
       "contextLength": 16384,
       "description": "Specialized in coding, debugging, and algorithms"
     },
     {
-      "title": "♟️ Chess Expert",
+      "title": "🌍 Multilingual (Qwen3)",
       "provider": "openai",
-      "model": "mistral:latest",
-      "apiBase": "http://localhost:4000/v1",
-      "apiKey": "not-needed",
-      "contextLength": 8192,
-      "description": "Expert in chess strategy, openings, and game analysis"
-    },
-    {
-      "title": "🌍 Multilingual",
-      "provider": "openai",
-      "model": "qwen2.5:latest",
+      "model": "huihui_ai/qwen3-abliterated:latest",
       "apiBase": "http://localhost:4000/v1",
       "apiKey": "not-needed",
       "contextLength": 32768,
@@ -76,7 +67,7 @@
   "tabAutocompleteModel": {
     "title": "Autocomplete",
     "provider": "openai",
-    "model": "qwen2.5-coder:7b:latest",
+    "model": "qwen2.5-coder:7b",
     "apiBase": "http://localhost:4000/v1",
     "apiKey": "not-needed"
   },

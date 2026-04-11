@@ -59,21 +59,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-**Résultat** : Route automatiquement vers **deepseek-coder-v2**
-
-```bash
-# Question d'échecs
-curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "auto",
-    "messages": [
-      {"role": "user", "content": "What is the best response to 1.e4?"}
-    ]
-  }'
-```
-
-**Résultat** : Route automatiquement vers **deepseek-chess**
+**Résultat** : Route automatiquement vers **qwen2.5-coder:7b**
 
 ---
 
@@ -95,13 +81,15 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 ## Workflow Optimal
 
 **Avant** :
+
 ```
 Vous → Question → Claude API → $$$ tokens
 ```
 
 **Maintenant** :
+
 ```
-Vous → Question code → Continue/Claude-Code → Gateway → deepseek-coder → Réponse
+Vous → Question code → Continue/Claude-Code → Gateway → qwen2.5-coder → Réponse
 ```
 
 **Économie** : ~10-20x moins de tokens Claude
@@ -110,14 +98,13 @@ Vous → Question code → Continue/Claude-Code → Gateway → deepseek-coder �
 
 ## Exemples de Routing
 
-| Prompt | Modèle Sélectionné | Raison |
-|--------|-------------------|---------|
-| "Write Python code" | deepseek-coder-v2 | Matched: python, code |
-| "Explain chess opening" | deepseek-chess | Matched: chess, opening |
-| "Translate to French" | qwen2.5 | Matched: translate |
-| "Write a story" | gemma2 | Matched: creative, write |
-| "Quick answer" | llama3.2 | Matched: quick, fast |
-| Autre | mistral | Default |
+| Prompt                | Modèle Sélectionné          | Raison                   |
+| --------------------- | --------------------------- | ------------------------ |
+| "Write Python code"   | qwen2.5-coder:7b            | Matched: python, code    |
+| "Translate to French" | huihui_ai/qwen3-abliterated | Matched: translate       |
+| "Write a story"       | gemma2                      | Matched: creative, write |
+| "Quick answer"        | llama3.2                    | Matched: quick, fast     |
+| Autre                 | mistral                     | Default                  |
 
 ---
 
@@ -126,7 +113,7 @@ Vous → Question code → Continue/Claude-Code → Gateway → deepseek-coder �
 Le gateway affiche les décisions de routing :
 
 ```
-2025-01-18 10:30:15 - INFO - Routing: deepseek-coder-v2:latest - Best for coding (matched: python, code)
+2025-01-18 10:30:15 - INFO - Routing: qwen2.5-coder:7b - Best for coding (matched: python, code)
 ```
 
 ---
@@ -157,6 +144,7 @@ python main.py
 ## Prochaines Étapes (P1)
 
 Dashboard autonome avec :
+
 - Interface conversationnelle
 - Visualisation temps réel
 - Statistiques d'utilisation

@@ -4,7 +4,7 @@
 
 ## Objectif
 
-Permettre à Claude-Code, Continue.dev, Cursor, et tout outil compatible OpenAI d'utiliser **vos 9 modèles Ollama locaux** avec routing automatique intelligent.
+Permettre à Claude-Code, Continue.dev, Cursor, et tout outil compatible OpenAI d'utiliser **vos modèles Ollama locaux** avec routing automatique intelligent.
 
 ## Architecture
 
@@ -30,23 +30,20 @@ Le gateway démarre sur **http://localhost:4000**
 
 ### Models configurés (config.json)
 
-| Modèle | Rôle | Tags | Priorité |
-|--------|------|------|----------|
-| deepseek-coder-v2 | coding | code, python, debug, refactor | 1 |
-| deepseek-chess | chess | échecs, chess, fen, pgn | 1 |
-| gemma2 | creative | creative, story, write, poem | 2 |
-| qwen2.5 | multilingual | translate, français, english | 2 |
-| mistral | general | (défaut) | 1 |
-| llama3.2 | fast | quick, fast, short | 3 |
-| + 3 modèles chess spécialisés | | | |
+| Modèle                      | Rôle         | Tags                                   | Priorité |
+| --------------------------- | ------------ | -------------------------------------- | -------- |
+| qwen2.5-coder:7b            | coding       | code, python, javascript, debug, etc.  | 1        |
+| gemma2                      | creative     | creative, story, write, poem           | 2        |
+| huihui_ai/qwen3-abliterated | multilingual | translate, français, english, language | 2        |
+| llama3.2                    | fast         | quick, fast, short, simple             | 3        |
+| mistral                     | general      | (défaut)                               | 1        |
 
 ### Routing Intelligent
 
 Le gateway analyse votre prompt et route automatiquement :
 
-- **"Write a Python function"** → deepseek-coder-v2
-- **"Quelle est la meilleure ouverture aux échecs ?"** → deepseek-chess
-- **"Translate to French"** → qwen2.5
+- **"Write a Python function"** → qwen2.5-coder:7b
+- **"Translate to French"** → huihui_ai/qwen3-abliterated
 - **"Write a story"** → gemma2
 - **"Quick answer"** → llama3.2
 - **Autre** → mistral
@@ -74,6 +71,7 @@ Dans votre configuration VSCode (Continue ou Claude-Code) :
 ### 2. Avec Cursor
 
 Settings → Models → Add Custom Model :
+
 - Provider: OpenAI Compatible
 - Base URL: `http://localhost:4000/v1`
 - Model: `auto`
@@ -104,11 +102,12 @@ curl -X POST http://localhost:4000/gateway/route \
 ```
 
 Réponse :
+
 ```json
 {
-  "prompt": "Explain the Sicilian Defense in chess",
-  "selected_model": "deepseek-chess:latest",
-  "reason": "Best for chess (matched: échecs, chess)"
+  "prompt": "Write a recursive fibonacci in Python",
+  "selected_model": "qwen2.5-coder:7b",
+  "reason": "Best for coding (matched: python)"
 }
 ```
 
@@ -137,14 +136,16 @@ Réponse :
 ## Workflow Typique
 
 **Avant** (sans Gateway) :
+
 ```
 Vous → Question → Claude → Réponse Claude (coûteux en tokens)
 ```
 
 **Maintenant** (avec Gateway) :
+
 ```
-Vous → Question code → Claude-Code → Gateway → deepseek-coder → Réponse
-Vous → Question chess → Claude-Code → Gateway → deepseek-chess → Réponse
+Vous → Question code → Claude-Code → Gateway → qwen2.5-coder → Réponse
+Vous → Question créative → Claude-Code → Gateway → gemma2 → Réponse
 ```
 
 **Économie** : ~10-20x moins de tokens Claude consommés
@@ -155,7 +156,7 @@ Le gateway log toutes les décisions de routing :
 
 ```
 2025-01-18 10:30:15 - INFO - Received chat completion request
-2025-01-18 10:30:15 - INFO - Routing: deepseek-coder-v2:latest - Best for coding (matched: code, python)
+2025-01-18 10:30:15 - INFO - Routing: qwen2.5-coder:7b - Best for coding (matched: code, python)
 ```
 
 ## Prochaines Étapes (P1)
@@ -169,19 +170,22 @@ Le gateway log toutes les décisions de routing :
 ## Troubleshooting
 
 **Gateway ne démarre pas** :
+
 - Vérifier que Python 3.9+ est installé
 - Vérifier que Ollama tourne (`ollama serve`)
 
 **Modèle non trouvé** :
+
 - Lister vos modèles : `ollama list`
 - Vérifier config.json correspond à vos modèles installés
 
 **Pas de réponse** :
+
 - Vérifier logs du gateway
 - Tester Ollama directement : `ollama run mistral "Hello"`
 
 ## Support
 
-- Gateway créé pour usage avec vos 9 modèles Ollama locaux
+- Gateway créé pour usage avec vos 5 modèles Ollama locaux
 - Configuration adaptée à vos modèles spécifiques
 - Prêt pour intégration Claude-Code / Continue / Cursor

@@ -29,7 +29,7 @@ repos:
     hooks:
       - id: mypy
         name: "🐍 mypy - Type Checker"
-        additional_dependencies: [types-all]
+        additional_dependencies: [types-requests]
         args: ['--ignore-missing-imports', '--strict']
 
   # ===== JAVASCRIPT CODE QUALITY =====
