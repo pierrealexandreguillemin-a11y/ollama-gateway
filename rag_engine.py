@@ -5,11 +5,11 @@ Local vector embeddings with Ollama + semantic search
 
 import json
 import logging
-import os
-from typing import List, Dict, Any, Optional
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import httpx
 import numpy as np
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,9 @@ class RAGEngine:
     No external dependencies - 100% local
     """
 
-    def __init__(self, ollama_url: str = "http://localhost:11434", storage_path: str = "./rag_storage"):
+    def __init__(
+        self, ollama_url: str = "http://localhost:11434", storage_path: str = "./rag_storage"
+    ):
         self.ollama_url = ollama_url
         self.storage_path = Path(storage_path)
         self.storage_path.mkdir(exist_ok=True)
@@ -41,25 +43,27 @@ class RAGEngine:
     def _load_vectors(self) -> Dict[str, List[float]]:
         """Load vector embeddings from storage"""
         if self.vectors_file.exists():
-            with open(self.vectors_file, 'r') as f:
-                return json.load(f)
+            with open(self.vectors_file, "r") as f:
+                data: Dict[str, List[float]] = json.load(f)
+                return data
         return {}
 
     def _load_documents(self) -> Dict[str, Dict[str, Any]]:
         """Load document metadata from storage"""
         if self.documents_file.exists():
-            with open(self.documents_file, 'r') as f:
-                return json.load(f)
+            with open(self.documents_file, "r") as f:
+                data: Dict[str, Dict[str, Any]] = json.load(f)
+                return data
         return {}
 
-    def _save_vectors(self):
+    def _save_vectors(self) -> None:
         """Persist vectors to disk"""
-        with open(self.vectors_file, 'w') as f:
+        with open(self.vectors_file, "w") as f:
             json.dump(self.vectors, f)
 
-    def _save_documents(self):
+    def _save_documents(self) -> None:
         """Persist documents to disk"""
-        with open(self.documents_file, 'w') as f:
+        with open(self.documents_file, "w") as f:
             json.dump(self.documents, f, indent=2)
 
     async def get_embedding(self, text: str) -> Optional[List[float]]:
@@ -70,15 +74,13 @@ class RAGEngine:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.post(
                     f"{self.ollama_url}/api/embeddings",
-                    json={
-                        "model": self.embedding_model,
-                        "prompt": text
-                    }
+                    json={"model": self.embedding_model, "prompt": text},
                 )
 
                 if response.status_code == 200:
-                    data = response.json()
-                    return data.get("embedding")
+                    resp_data = response.json()
+                    embedding: Optional[List[float]] = resp_data.get("embedding")
+                    return embedding
                 else:
                     logger.error(f"Embedding API error: {response.status_code}")
                     return None
@@ -92,7 +94,7 @@ class RAGEngine:
         doc_id: str,
         content: str,
         metadata: Optional[Dict[str, Any]] = None,
-        project_id: Optional[str] = None
+        project_id: Optional[str] = None,
     ) -> bool:
         """
         Add a document to the RAG index
@@ -118,7 +120,7 @@ class RAGEngine:
                 "content": content,
                 "metadata": metadata or {},
                 "project_id": project_id,
-                "embedding_model": self.embedding_model
+                "embedding_model": self.embedding_model,
             }
 
             # Persist
@@ -144,14 +146,15 @@ class RAGEngine:
         if norm1 == 0 or norm2 == 0:
             return 0.0
 
-        return dot_product / (norm1 * norm2)
+        result: float = float(dot_product / (norm1 * norm2))
+        return result
 
     async def search(
         self,
         query: str,
         top_k: int = 5,
         project_id: Optional[str] = None,
-        min_similarity: float = 0.5
+        min_similarity: float = 0.5,
     ) -> List[Dict[str, Any]]:
         """
         Semantic search in the RAG index
@@ -186,13 +189,15 @@ class RAGEngine:
                 similarity = self.cosine_similarity(query_embedding, doc_embedding)
 
                 if similarity >= min_similarity:
-                    results.append({
-                        "doc_id": doc_id,
-                        "similarity": float(similarity),
-                        "content": self.documents[doc_id]["content"],
-                        "metadata": self.documents[doc_id]["metadata"],
-                        "project_id": self.documents[doc_id].get("project_id")
-                    })
+                    results.append(
+                        {
+                            "doc_id": doc_id,
+                            "similarity": float(similarity),
+                            "content": self.documents[doc_id]["content"],
+                            "metadata": self.documents[doc_id]["metadata"],
+                            "project_id": self.documents[doc_id].get("project_id"),
+                        }
+                    )
 
             # Sort by similarity and return top_k
             results.sort(key=lambda x: x["similarity"], reverse=True)
@@ -203,10 +208,7 @@ class RAGEngine:
             return []
 
     async def get_context_for_query(
-        self,
-        query: str,
-        project_id: Optional[str] = None,
-        max_tokens: int = 2000
+        self, query: str, project_id: Optional[str] = None, max_tokens: int = 2000
     ) -> str:
         """
         Get relevant context for a query (for RAG-enhanced chat)
@@ -262,8 +264,7 @@ class RAGEngine:
         """Delete all documents for a project"""
         deleted = 0
         docs_to_delete = [
-            doc_id for doc_id, doc in self.documents.items()
-            if doc.get("project_id") == project_id
+            doc_id for doc_id, doc in self.documents.items() if doc.get("project_id") == project_id
         ]
 
         for doc_id in docs_to_delete:
@@ -275,8 +276,7 @@ class RAGEngine:
     def get_stats(self) -> Dict[str, Any]:
         """Get RAG engine statistics"""
         projects = set(
-            doc.get("project_id") for doc in self.documents.values()
-            if doc.get("project_id")
+            doc.get("project_id") for doc in self.documents.values() if doc.get("project_id")
         )
 
         return {
@@ -284,7 +284,7 @@ class RAGEngine:
             "total_projects": len(projects),
             "embedding_model": self.embedding_model,
             "storage_path": str(self.storage_path),
-            "storage_size_mb": self._get_storage_size()
+            "storage_size_mb": self._get_storage_size(),
         }
 
     def _get_storage_size(self) -> float:

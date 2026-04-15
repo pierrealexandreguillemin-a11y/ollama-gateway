@@ -11,6 +11,7 @@
 **Impact**: 🚀 10x capacité stockage
 
 ### Ce qu'on fait:
+
 ```javascript
 ✅ Schema IndexedDB (projects, messages, settings)
 ✅ Migration automatique depuis LocalStorage
@@ -20,16 +21,19 @@
 ```
 
 ### Stack:
+
 ```bash
 npm install idb  # IndexedDB wrapper (Jake Archibald)
 ```
 
 ### Files Modifiés:
+
 - `studio/app.js` (add DB layer)
 - `studio/db.js` (NEW - IndexedDB wrapper)
 - `studio/index.html` (add capacity indicator)
 
 ### Résultat:
+
 ```
 v1.3.0: ~50-200 messages/projet (LocalStorage)
       ↓
@@ -47,6 +51,7 @@ v2.0.0-alpha: ~1000 messages/projet (IndexedDB)
 **Impact**: 🚀🚀 10x stockage + Export/Import
 
 ### Ce qu'on fait:
+
 ```javascript
 ✅ TOUT de l'Option A +
 ✅ Compression LZ-String (60% gain)
@@ -56,11 +61,13 @@ v2.0.0-alpha: ~1000 messages/projet (IndexedDB)
 ```
 
 ### Stack:
+
 ```bash
 npm install idb lz-string file-saver
 ```
 
 ### Files Modifiés:
+
 - Option A +
 - `studio/storage.js` (NEW - compression utils)
 - `studio/export.js` (NEW - export/import logic)
@@ -68,6 +75,7 @@ npm install idb lz-string file-saver
 - `studio/style.css` (settings modal styling)
 
 ### Résultat:
+
 ```
 v1.3.0: ~50-200 messages, pas d'export
       ↓
@@ -85,6 +93,7 @@ v2.0.0-beta: ~2000-3000 messages (compressed), export/import JSON
 **Impact**: 🚀🚀🚀 Game changer
 
 ### Ce qu'on fait:
+
 ```javascript
 ✅ TOUT de l'Option B +
 ✅ Drag & drop files (.txt, .pdf, .py)
@@ -95,12 +104,14 @@ v2.0.0-beta: ~2000-3000 messages (compressed), export/import JSON
 ```
 
 ### Stack:
+
 ```bash
 npm install idb lz-string file-saver pdfjs-dist papaparse
 ollama pull nomic-embed-text  # 137M
 ```
 
 ### Files Modifiés:
+
 - Option B +
 - `studio/rag.js` (NEW - RAG pipeline)
 - `studio/embeddings.js` (NEW - vector ops)
@@ -109,6 +120,7 @@ ollama pull nomic-embed-text  # 137M
 - Update `studio/app.js` (inject context)
 
 ### Résultat:
+
 ```
 v1.3.0: Simple chat
       ↓
@@ -125,18 +137,21 @@ v2.1.0-alpha: Chat + RAG local sur tes documents
 **Pour ce soir, je recommande Option A ou B**:
 
 ### ✅ Option A si:
+
 - Tu veux un quick win solide
 - Test rapide d'IndexedDB
 - Commit avant minuit
 - Repos demain
 
 ### ✅ Option B si:
+
 - Tu veux une feature complète utilisable
 - Export/Import = super pratique quotidiennement
 - Motivation pour 4-6h focus
 - Repos demain après-midi
 
 ### ⚠️ Option C seulement si:
+
 - Tu es ultra motivé
 - Full night coding session
 - Week-end libre demain
@@ -154,6 +169,7 @@ v2.1.0-alpha: Chat + RAG local sur tes documents
 4. **Milestone propre**: v2.0.0-beta = tag clean pour demain matin
 
 **Planning**:
+
 ```
 22h00 - 23h30 → IndexedDB schema + migration (1.5h)
 23h30 - 01h00 → LZ-String compression (1.5h)
@@ -169,6 +185,7 @@ Total: ~6h → v2.0.0-beta DONE 🎉
 ## 📝 Ton Choix ?
 
 **Réponds juste**:
+
 - `A` → IndexedDB migration (2-3h)
 - `B` → Storage complete (4-6h) ← RECOMMENDED
 - `C` → RAG preview (8-10h)

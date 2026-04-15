@@ -5,9 +5,9 @@ Multi-project organization with tags, categories, and search
 
 import json
 import logging
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -30,17 +30,18 @@ class WorkspaceManager:
         """Load workspaces from storage"""
         if self.workspaces_file.exists():
             try:
-                with open(self.workspaces_file, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                with open(self.workspaces_file, "r", encoding="utf-8") as f:
+                    data: Dict[str, Dict[str, Any]] = json.load(f)
+                    return data
             except Exception as e:
                 logger.error(f"Failed to load workspaces: {e}")
                 return {}
         return {}
 
-    def _save_workspaces(self):
+    def _save_workspaces(self) -> None:
         """Persist workspaces to disk"""
         try:
-            with open(self.workspaces_file, 'w', encoding='utf-8') as f:
+            with open(self.workspaces_file, "w", encoding="utf-8") as f:
                 json.dump(self.workspaces, f, indent=2, ensure_ascii=False)
         except Exception as e:
             logger.error(f"Failed to save workspaces: {e}")
@@ -51,7 +52,7 @@ class WorkspaceManager:
         description: str = "",
         tags: Optional[List[str]] = None,
         category: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Create a new workspace
@@ -84,8 +85,8 @@ class WorkspaceManager:
                 "preferred_model": "auto",
                 "enable_rag": True,
                 "enable_attachments": True,
-                "context_mode": "auto"  # auto, full, minimal
-            }
+                "context_mode": "auto",  # auto, full, minimal
+            },
         }
 
         self.workspaces[workspace_id] = workspace
@@ -99,9 +100,7 @@ class WorkspaceManager:
         return self.workspaces.get(workspace_id)
 
     def update_workspace(
-        self,
-        workspace_id: str,
-        updates: Dict[str, Any]
+        self, workspace_id: str, updates: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         """
         Update workspace properties
@@ -119,10 +118,7 @@ class WorkspaceManager:
             return None
 
         # Update allowed fields
-        allowed_fields = {
-            "name", "description", "tags", "category",
-            "metadata", "settings"
-        }
+        allowed_fields = {"name", "description", "tags", "category", "metadata", "settings"}
 
         for key, value in updates.items():
             if key in allowed_fields:
@@ -152,7 +148,7 @@ class WorkspaceManager:
         self,
         category: Optional[str] = None,
         tags: Optional[List[str]] = None,
-        search_query: Optional[str] = None
+        search_query: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
         List workspaces with optional filtering
@@ -210,12 +206,7 @@ class WorkspaceManager:
                 tags.add(tag)
         return sorted(list(tags))
 
-    def increment_stats(
-        self,
-        workspace_id: str,
-        stat_name: str,
-        amount: int = 1
-    ):
+    def increment_stats(self, workspace_id: str, stat_name: str, amount: int = 1) -> None:
         """
         Increment workspace statistics
 
@@ -233,17 +224,11 @@ class WorkspaceManager:
 
     def get_stats(self) -> Dict[str, Any]:
         """Get overall workspace statistics"""
-        total_messages = sum(
-            ws.get("message_count", 0) for ws in self.workspaces.values()
-        )
-        total_attachments = sum(
-            ws.get("attachment_count", 0) for ws in self.workspaces.values()
-        )
-        total_rag_docs = sum(
-            ws.get("rag_doc_count", 0) for ws in self.workspaces.values()
-        )
+        total_messages = sum(ws.get("message_count", 0) for ws in self.workspaces.values())
+        total_attachments = sum(ws.get("attachment_count", 0) for ws in self.workspaces.values())
+        total_rag_docs = sum(ws.get("rag_doc_count", 0) for ws in self.workspaces.values())
 
-        categories = {}
+        categories: Dict[str, int] = {}
         for workspace in self.workspaces.values():
             cat = workspace.get("category", "general")
             categories[cat] = categories.get(cat, 0) + 1
@@ -254,13 +239,11 @@ class WorkspaceManager:
             "total_attachments": total_attachments,
             "total_rag_documents": total_rag_docs,
             "categories": categories,
-            "total_tags": len(self.get_all_tags())
+            "total_tags": len(self.get_all_tags()),
         }
 
     def search_across_workspaces(
-        self,
-        query: str,
-        include_content: bool = False
+        self, query: str, include_content: bool = False
     ) -> List[Dict[str, Any]]:
         """
         Search across all workspace metadata
@@ -273,7 +256,7 @@ class WorkspaceManager:
             List of matching workspaces with context
         """
         query_lower = query.lower()
-        results = []
+        results: List[Dict[str, Any]] = []
 
         for workspace in self.workspaces.values():
             score = 0
@@ -301,11 +284,9 @@ class WorkspaceManager:
                 matches.append("category")
 
             if score > 0:
-                results.append({
-                    "workspace": workspace,
-                    "relevance_score": score,
-                    "matches": matches
-                })
+                results.append(
+                    {"workspace": workspace, "relevance_score": score, "matches": matches}
+                )
 
         # Sort by relevance
         results.sort(key=lambda x: x["relevance_score"], reverse=True)
@@ -319,11 +300,7 @@ class WorkspaceManager:
         if not workspace:
             return None
 
-        return {
-            "workspace": workspace,
-            "exported_at": datetime.now().isoformat(),
-            "version": "2.0"
-        }
+        return {"workspace": workspace, "exported_at": datetime.now().isoformat(), "version": "2.0"}
 
     def import_workspace(self, workspace_data: Dict[str, Any]) -> Optional[str]:
         """Import workspace from exported data"""

@@ -2,7 +2,23 @@
   "models": {
     "qwen2.5-coder:7b": {
       "role": "coding",
-      "tags": ["code", "python", "javascript", "typescript", "java", "rust", "go", "c++", "bug", "debug", "refactor", "function", "class", "api", "algorithm"],
+      "tags": [
+        "code",
+        "python",
+        "javascript",
+        "typescript",
+        "java",
+        "rust",
+        "go",
+        "c++",
+        "bug",
+        "debug",
+        "refactor",
+        "function",
+        "class",
+        "api",
+        "algorithm"
+      ],
       "priority": 1
     },
     "gemma2:latest": {
@@ -10,9 +26,18 @@
       "tags": ["creative", "story", "write", "poem", "creative", "imagine", "brainstorm", "design"],
       "priority": 2
     },
-    "qwen2.5:latest": {
+    "huihui_ai/qwen3-abliterated:latest": {
       "role": "multilingual",
-      "tags": ["translate", "translation", "français", "english", "español", "japanese", "chinese", "language"],
+      "tags": [
+        "translate",
+        "translation",
+        "français",
+        "english",
+        "español",
+        "japanese",
+        "chinese",
+        "language"
+      ],
       "priority": 2
     },
     "llama3.2:latest": {

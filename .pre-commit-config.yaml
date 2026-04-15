@@ -86,7 +86,7 @@ repos:
     hooks:
       - id: a11y-check
         name: "♿ Check Accessibility Attributes"
-        entry: bash -c 'grep -L "aria-label\|aria-labelledby" studio/*.html && echo "❌ Missing ARIA labels in HTML" && exit 1 || echo "✅ ARIA labels present"'
+        entry: "bash -c 'FILES=$(grep -L \"aria-label\\|aria-labelledby\" studio/*.html 2>/dev/null); if [ -n \"$FILES\" ]; then echo Missing ARIA labels && exit 1; else echo ARIA labels present; fi'"
         language: system
         files: \.html$
         pass_filenames: false

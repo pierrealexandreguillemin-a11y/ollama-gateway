@@ -8,15 +8,16 @@
 
 ## 📊 État Actuel - v1.3.0 ✅
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Gateway OpenAI-compatible | ✅ 100% | 9 modèles locaux |
-| Studio Dashboard | ✅ 100% | Chat, projects, streaming |
+| Feature                   | Status  | Notes                          |
+| ------------------------- | ------- | ------------------------------ |
+| Gateway OpenAI-compatible | ✅ 100% | 9 modèles locaux               |
+| Studio Dashboard          | ✅ 100% | Chat, projects, streaming      |
 | Accessibilité WCAG 2.1 AA | ✅ 100% | Seul dashboard Ollama certifié |
-| Code Quality (3 niveaux) | ✅ 100% | Black, Flake8, pre-commit |
-| LocalStorage persistence | ✅ 100% | ~50-200 messages/projet |
+| Code Quality (3 niveaux)  | ✅ 100% | Black, Flake8, pre-commit      |
+| LocalStorage persistence  | ✅ 100% | ~50-200 messages/projet        |
 
 **Limitations actuelles**:
+
 - ❌ Pas de contexte partagé entre projets
 - ❌ Pas de fichiers joints
 - ❌ Pas de graphiques/visualisations
@@ -33,6 +34,7 @@
 ### Features
 
 #### 1. Migration IndexedDB
+
 **Why**: LocalStorage = 5-10 MB max, IndexedDB = 50-100 MB (10-20x)
 
 ```javascript
@@ -44,12 +46,14 @@
 ```
 
 **Gains**:
+
 - ✅ 1000+ messages par projet (vs 50-200 actuellement)
 - ✅ Recherche full-text dans IndexedDB
 - ✅ Transactions ACID
 - ✅ Support multi-onglets (SharedWorker)
 
 #### 2. Compression LZ-String
+
 **Why**: Réduire empreinte mémoire ~60%
 
 ```javascript
@@ -62,11 +66,13 @@ originalContent = LZString.decompressFromUTF16(compressedContent);
 ```
 
 **Gains**:
+
 - ✅ 2-3x plus de messages stockables
 - ✅ Réponses longues (code, documents) compressées
 - ✅ Transparent pour l'utilisateur
 
 #### 3. Export/Import JSON
+
 **Why**: Portabilité, backup, partage
 
 ```javascript
@@ -78,12 +84,14 @@ importProject(file) → Merge intelligent ou création nouveau projet
 ```
 
 **Features**:
+
 - ✅ Export d'un projet → JSON
 - ✅ Export ALL projects → ZIP
 - ✅ Import avec détection de doublons
 - ✅ Validation schema avant import
 
 #### 4. UI Improvements
+
 - ✅ Barre de progression "X messages / capacité max"
 - ✅ Bouton "Export projet" dans menu projet
 - ✅ Settings panel (gear icon) → Import/Export/Clear
@@ -122,10 +130,10 @@ importProject(file) → Merge intelligent ou création nouveau projet
 #### 1. @Attachments System
 
 **Drag & Drop Interface**:
+
 ```html
 <div id="attachment-zone">
-  📎 Drop files here or click to browse
-  Supported: .txt, .py, .js, .md, .pdf, .csv, .png, .jpg
+  📎 Drop files here or click to browse Supported: .txt, .py, .js, .md, .pdf, .csv, .png, .jpg
 </div>
 ```
 
@@ -138,6 +146,7 @@ importProject(file) → Merge intelligent ou création nouveau projet
 | Images | .png, .jpg, .svg | OCR (tesseract.js) + base64 |
 
 **Storage**:
+
 ```javascript
 // IndexedDB schema
 attachments: {
@@ -155,6 +164,7 @@ attachments: {
 #### 2. Local RAG (Retrieval-Augmented Generation)
 
 **Pipeline**:
+
 ```
 1. User uploads document.pdf
 2. Extract text → Chunk (512 tokens)
@@ -165,6 +175,7 @@ attachments: {
 ```
 
 **Ollama Embedding Models**:
+
 ```bash
 # Télécharger embedding model local
 ollama pull nomic-embed-text       # 137M, très rapide
@@ -173,14 +184,15 @@ ollama pull bge-m3                 # Multilingual
 ```
 
 **JavaScript Implementation**:
+
 ```javascript
 async function embedText(text) {
   const response = await fetch(`${OLLAMA_URL}/api/embeddings`, {
     method: 'POST',
     body: JSON.stringify({
       model: 'nomic-embed-text',
-      prompt: text
-    })
+      prompt: text,
+    }),
   });
   const { embedding } = await response.json();
   return embedding; // Float32Array
@@ -193,7 +205,7 @@ async function semanticSearch(query, topK = 3) {
   // Cosine similarity
   const scores = allChunks.map(chunk => ({
     chunk,
-    score: cosineSimilarity(queryEmbed, chunk.embedding)
+    score: cosineSimilarity(queryEmbed, chunk.embedding),
   }));
 
   return scores.sort((a, b) => b.score - a.score).slice(0, topK);
@@ -218,6 +230,7 @@ async function semanticSearch(query, topK = 3) {
 ```
 
 **Usage**:
+
 ```
 User dans "Chess Project":
 "@library Cherche dans ma knowledge base comment implémenter Glicko-2"
@@ -271,5 +284,7 @@ User dans "Chess Project":
 #### 1. Chart.js + ApexCharts Integration
 
 **Auto-detection dans markdown**:
+
 ```markdown
 User: "Analyse ce CSV de mes parties d'échecs"
+```

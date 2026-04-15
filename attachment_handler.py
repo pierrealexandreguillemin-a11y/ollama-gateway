@@ -3,13 +3,12 @@ Attachment Handler
 File upload, parsing, and RAG integration
 """
 
-import logging
-import os
 import hashlib
-from pathlib import Path
-from typing import Optional, Dict, Any, List
-from datetime import datetime
+import logging
 import mimetypes
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +26,38 @@ class AttachmentHandler:
         # Supported file types
         self.supported_extensions = {
             # Text formats
-            '.txt', '.md', '.markdown',
+            ".txt",
+            ".md",
+            ".markdown",
             # Code
-            '.py', '.js', '.ts', '.jsx', '.tsx', '.java', '.c', '.cpp', '.cs',
-            '.go', '.rs', '.rb', '.php', '.html', '.css', '.scss', '.sql',
+            ".py",
+            ".js",
+            ".ts",
+            ".jsx",
+            ".tsx",
+            ".java",
+            ".c",
+            ".cpp",
+            ".cs",
+            ".go",
+            ".rs",
+            ".rb",
+            ".php",
+            ".html",
+            ".css",
+            ".scss",
+            ".sql",
             # Data
-            '.json', '.csv', '.xml', '.yaml', '.yml', '.toml',
+            ".json",
+            ".csv",
+            ".xml",
+            ".yaml",
+            ".yml",
+            ".toml",
             # Documentation
-            '.pdf', '.rst', '.tex'
+            ".pdf",
+            ".rst",
+            ".tex",
         }
 
         # Max file size (10MB)
@@ -54,7 +77,11 @@ class AttachmentHandler:
         try:
             # For v2.0, we'll use simple extraction
             # In production, use PyPDF2 or pdfplumber
-            return f"[PDF Content from {file_path.name}]\n\nPDF parsing requires PyPDF2 library.\nInstall: pip install pypdf2"
+            return (
+                f"[PDF Content from {file_path.name}]\n\n"
+                "PDF parsing requires PyPDF2 library.\n"
+                "Install: pip install pypdf2"
+            )
         except Exception as e:
             logger.error(f"PDF extraction failed: {e}")
             return ""
@@ -67,27 +94,54 @@ class AttachmentHandler:
             extension = file_path.suffix.lower()
 
             # PDF
-            if extension == '.pdf':
+            if extension == ".pdf":
                 return self._extract_text_from_pdf(file_path)
 
             # Text-based files
-            if extension in {'.txt', '.md', '.markdown', '.json', '.yaml', '.yml',
-                           '.csv', '.xml', '.toml', '.rst', '.tex'}:
-                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            if extension in {
+                ".txt",
+                ".md",
+                ".markdown",
+                ".json",
+                ".yaml",
+                ".yml",
+                ".csv",
+                ".xml",
+                ".toml",
+                ".rst",
+                ".tex",
+            }:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     return f.read()
 
             # Code files
-            if extension in {'.py', '.js', '.ts', '.jsx', '.tsx', '.java', '.c',
-                           '.cpp', '.cs', '.go', '.rs', '.rb', '.php', '.html',
-                           '.css', '.scss', '.sql'}:
-                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            if extension in {
+                ".py",
+                ".js",
+                ".ts",
+                ".jsx",
+                ".tsx",
+                ".java",
+                ".c",
+                ".cpp",
+                ".cs",
+                ".go",
+                ".rs",
+                ".rb",
+                ".php",
+                ".html",
+                ".css",
+                ".scss",
+                ".sql",
+            }:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                     # Add language identifier for better context
                     lang = extension[1:]  # Remove the dot
                     return f"```{lang}\n{content}\n```"
 
             # Fallback: try text
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 return f.read()
 
         except Exception as e:
@@ -99,7 +153,7 @@ class AttachmentHandler:
         filename: str,
         content: bytes,
         project_id: str,
-        user_metadata: Optional[Dict[str, Any]] = None
+        user_metadata: Optional[Dict[str, Any]] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         Save an attachment and return metadata
@@ -137,7 +191,7 @@ class AttachmentHandler:
 
             # Save file
             file_path = project_dir / unique_filename
-            with open(file_path, 'wb') as f:
+            with open(file_path, "wb") as f:
                 f.write(content)
 
             # Get mime type
@@ -158,7 +212,7 @@ class AttachmentHandler:
                 "project_id": project_id,
                 "uploaded_at": datetime.now().isoformat(),
                 "text_content": text_content,
-                "user_metadata": user_metadata or {}
+                "user_metadata": user_metadata or {},
             }
 
             logger.info(f"Saved attachment: {filename} ({len(content)} bytes)")
@@ -187,7 +241,7 @@ class AttachmentHandler:
                         "file_path": str(file_path),
                         "size_bytes": file_path.stat().st_size,
                         "mime_type": mime_type,
-                        "project_id": project_id
+                        "project_id": project_id,
                     }
 
             return None
@@ -209,7 +263,7 @@ class AttachmentHandler:
             for file_path in project_dir.iterdir():
                 if file_path.is_file():
                     # Extract hash from filename (format: timestamp_hash_filename)
-                    parts = file_path.name.split('_', 2)
+                    parts = file_path.name.split("_", 2)
                     if len(parts) >= 3:
                         attachment_id = parts[1]
                     else:
@@ -217,15 +271,17 @@ class AttachmentHandler:
 
                     mime_type, _ = mimetypes.guess_type(str(file_path))
 
-                    attachments.append({
-                        "attachment_id": attachment_id,
-                        "filename": file_path.name,
-                        "size_bytes": file_path.stat().st_size,
-                        "mime_type": mime_type,
-                        "uploaded_at": datetime.fromtimestamp(
-                            file_path.stat().st_mtime
-                        ).isoformat()
-                    })
+                    attachments.append(
+                        {
+                            "attachment_id": attachment_id,
+                            "filename": file_path.name,
+                            "size_bytes": file_path.stat().st_size,
+                            "mime_type": mime_type,
+                            "uploaded_at": datetime.fromtimestamp(
+                                file_path.stat().st_mtime
+                            ).isoformat(),
+                        }
+                    )
 
             return attachments
 
@@ -299,7 +355,7 @@ class AttachmentHandler:
                 "total_projects": projects,
                 "total_size_mb": round(total_size / (1024 * 1024), 2),
                 "supported_extensions": list(self.supported_extensions),
-                "max_file_size_mb": self.max_file_size / (1024 * 1024)
+                "max_file_size_mb": self.max_file_size / (1024 * 1024),
             }
 
         except Exception as e:

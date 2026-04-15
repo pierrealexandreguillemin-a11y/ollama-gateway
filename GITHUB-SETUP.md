@@ -20,6 +20,7 @@ Votre repository local est prêt dans `C:\Dev\ollama-gateway`
 Allez sur https://github.com/new
 
 **Settings recommandés :**
+
 - Name: `ollama-gateway`
 - Description: `OpenAI-compatible API gateway for local Ollama models with intelligent routing`
 - Visibility: Public ou Private (votre choix)
@@ -95,6 +96,7 @@ ollama-gateway/
 ```
 
 **Fichiers exclus (via .gitignore) :**
+
 - `__pycache__/`
 - `*.pyc`
 - `.env`
@@ -107,6 +109,7 @@ ollama-gateway/
 ### Topics Suggérés
 
 Pour améliorer la découvrabilité :
+
 - `ollama`
 - `openai-api`
 - `local-ai`
@@ -196,6 +199,7 @@ git push origin v1.1.0
 ## Repository Prêt ! 🎉
 
 Votre code est :
+
 - ✅ Versionné avec Git
 - ✅ Taggé v1.0.0
 - ✅ Prêt pour GitHub

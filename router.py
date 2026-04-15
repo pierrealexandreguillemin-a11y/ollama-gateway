@@ -4,7 +4,7 @@ Routes prompts to the best local model based on content analysis
 """
 
 import json
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 
 class IntelligentRouter:
@@ -53,7 +53,8 @@ class IntelligentRouter:
         if scores:
             best_model = max(scores.items(), key=lambda x: x[1]["score"])
             model_name = best_model[0]
-            reason = f"Best for {best_model[1]['role']} (matched: {', '.join(best_model[1]['tags'][:3])})"
+            matched = ", ".join(best_model[1]["tags"][:3])
+            reason = f"Best for {best_model[1]['role']} " f"(matched: {matched})"
             return model_name, reason
 
         # Long prompts (>4000 chars) -> use reasoning model
@@ -67,7 +68,7 @@ class IntelligentRouter:
         # Default
         return self.default_model, "Default general model"
 
-    def get_available_models(self) -> Dict:
+    def get_available_models(self) -> Dict[str, Any]:
         """Returns list of configured models"""
         return {
             "models": [

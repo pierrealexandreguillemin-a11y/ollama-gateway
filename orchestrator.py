@@ -6,7 +6,9 @@ Allows one AI to coordinate multiple specialized models for complex tasks
 import json
 import logging
 import re
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -16,12 +18,14 @@ class TaskOrchestrator:
     Orchestrates complex tasks across multiple specialized models
     """
 
-    def __init__(self, router, ollama_url: str):
+    def __init__(self, router: Any, ollama_url: str) -> None:
         self.router = router
         self.ollama_url = ollama_url
 
         # Define orchestrator model (the "brain")
-        self.orchestrator_model = "qwen2.5:latest"  # Good at reasoning and planning
+        self.orchestrator_model = (
+            "huihui_ai/qwen3-abliterated:latest"  # Good at reasoning and planning
+        )
 
     async def is_complex_task(self, prompt: str) -> bool:
         """
@@ -43,47 +47,52 @@ class TaskOrchestrator:
         prompt_lower = prompt.lower()
         return any(re.search(pattern, prompt_lower) for pattern in complex_indicators)
 
-    async def decompose_task(self, prompt: str, http_client) -> List[Dict[str, str]]:
+    async def decompose_task(
+        self, prompt: str, http_client: httpx.AsyncClient
+    ) -> List[Dict[str, str]]:
         """
         Use orchestrator AI to break down complex task into subtasks
         """
-        decomposition_prompt = f"""You are a task orchestration AI. Break down this complex request into 2-4 specific subtasks that can be handled by specialized models.
-
-Available specialists:
-- qwen2.5-coder:7b: Coding, debugging, algorithms
-- mistral: Chess strategy, game analysis
-- qwen2.5: Translation, multilingual tasks
-- gemma2: Creative writing, stories
-- mistral: General knowledge, explanations
-
-User request: {prompt}
-
-Respond with ONLY a JSON array of subtasks:
-[
-  {{"task": "brief description", "specialist": "model-name", "context": "what info is needed"}},
-  ...
-]"""
+        decomposition_prompt = (
+            "You are a task orchestration AI. "
+            "Break down this complex request into 2-4 specific "
+            "subtasks that can be handled by specialized "
+            "models.\n\n"
+            "Available specialists:\n"
+            "- qwen2.5-coder:7b: Coding, debugging, algorithms\n"
+            "- mistral: Chess strategy, game analysis\n"
+            "- huihui_ai/qwen3-abliterated: Translation, "
+            "multilingual tasks\n"
+            "- gemma2: Creative writing, stories\n"
+            "- mistral: General knowledge, explanations\n\n"
+            f"User request: {prompt}\n\n"
+            "Respond with ONLY a JSON array of subtasks:\n"
+            "[\n"
+            '  {"task": "brief description", '
+            '"specialist": "model-name", '
+            '"context": "what info is needed"},\n'
+            "  ...\n"
+            "]"
+        )
 
         payload = {
             "model": self.orchestrator_model,
             "messages": [{"role": "user", "content": decomposition_prompt}],
             "stream": False,
-            "options": {"temperature": 0.3}  # Low temp for consistent planning
+            "options": {"temperature": 0.3},  # Low temp for consistent planning
         }
 
         try:
             response = await http_client.post(
-                f"{self.ollama_url}/api/chat",
-                json=payload,
-                timeout=30.0
+                f"{self.ollama_url}/api/chat", json=payload, timeout=30.0
             )
             result = response.json()
             content = result.get("message", {}).get("content", "[]")
 
             # Extract JSON from response (might have markdown code blocks)
-            json_match = re.search(r'\[[\s\S]*\]', content)
+            json_match = re.search(r"\[[\s\S]*\]", content)
             if json_match:
-                subtasks = json.loads(json_match.group())
+                subtasks: List[Dict[str, str]] = json.loads(json_match.group())
                 logger.info(f"Orchestrator created {len(subtasks)} subtasks")
                 return subtasks
             else:
@@ -97,8 +106,8 @@ Respond with ONLY a JSON array of subtasks:
     async def execute_subtask(
         self,
         subtask: Dict[str, str],
-        http_client,
-        context: str = ""
+        http_client: httpx.AsyncClient,
+        context: str = "",
     ) -> str:
         """
         Execute a single subtask with the specified model
@@ -115,18 +124,17 @@ Respond with ONLY a JSON array of subtasks:
             "model": model,
             "messages": [{"role": "user", "content": full_prompt}],
             "stream": False,
-            "options": {"temperature": 0.7, "num_predict": 1024}
+            "options": {"temperature": 0.7, "num_predict": 1024},
         }
 
         try:
             logger.info(f"Executing subtask with {model}: {task_desc[:50]}...")
             response = await http_client.post(
-                f"{self.ollama_url}/api/chat",
-                json=payload,
-                timeout=60.0
+                f"{self.ollama_url}/api/chat", json=payload, timeout=60.0
             )
             result = response.json()
-            return result.get("message", {}).get("content", "No response")
+            content: str = result.get("message", {}).get("content", "No response")
+            return content
 
         except Exception as e:
             logger.error(f"Subtask execution failed: {e}")
@@ -136,15 +144,12 @@ Respond with ONLY a JSON array of subtasks:
         self,
         original_prompt: str,
         subtask_results: List[Tuple[str, str]],
-        http_client
+        http_client: httpx.AsyncClient,
     ) -> str:
         """
         Use orchestrator to combine results from all subtasks
         """
-        results_text = "\n\n".join([
-            f"**{task}**\n{result}"
-            for task, result in subtask_results
-        ])
+        results_text = "\n\n".join([f"**{task}**\n{result}" for task, result in subtask_results])
 
         synthesis_prompt = f"""You are synthesizing results from multiple specialized AIs.
 
@@ -161,21 +166,21 @@ Format with markdown for clarity."""
             "model": self.orchestrator_model,
             "messages": [{"role": "user", "content": synthesis_prompt}],
             "stream": False,
-            "options": {"temperature": 0.5, "num_predict": 2048}
+            "options": {"temperature": 0.5, "num_predict": 2048},
         }
 
         try:
             response = await http_client.post(
-                f"{self.ollama_url}/api/chat",
-                json=payload,
-                timeout=60.0
+                f"{self.ollama_url}/api/chat", json=payload, timeout=60.0
             )
             result = response.json()
-            final_answer = result.get("message", {}).get("content", "")
+            final_answer: str = result.get("message", {}).get("content", "")
 
             # Add metadata footer
             specialists_used = [task for task, _ in subtask_results]
-            footer = f"\n\n---\n*🤖 Multi-model orchestration | Subtasks: {len(specialists_used)}*"
+            footer = (
+                "\n\n---\n" f"*Multi-model orchestration | " f"Subtasks: {len(specialists_used)}*"
+            )
 
             return final_answer + footer
 
@@ -184,7 +189,9 @@ Format with markdown for clarity."""
             # Fallback: just concatenate results
             return results_text + f"\n\n*Error in synthesis: {str(e)}*"
 
-    async def orchestrate(self, prompt: str, http_client) -> Dict[str, Any]:
+    async def orchestrate(
+        self, prompt: str, http_client: httpx.AsyncClient
+    ) -> Optional[Dict[str, Any]]:
         """
         Main orchestration flow
         Returns: {
@@ -222,5 +229,5 @@ Format with markdown for clarity."""
             "answer": final_answer,
             "subtasks": [s.get("task") for s in subtasks],
             "models_used": list(set(models_used)),  # Unique models
-            "orchestration_steps": len(subtasks)
+            "orchestration_steps": len(subtasks),
         }

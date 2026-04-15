@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import time
+from typing import Any, AsyncIterator, Dict, Union
 
 import httpx
 from dotenv import load_dotenv
@@ -14,8 +15,8 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from router import IntelligentRouter
 from orchestrator import TaskOrchestrator
+from router import IntelligentRouter
 
 # Load environment variables
 load_dotenv()
@@ -62,8 +63,8 @@ ENABLE_LOGGING = (
 )
 
 
-@app.get("/")
-async def root():
+@app.get("/")  # type: ignore[misc]
+async def root() -> Union[Dict[str, Any], Any]:
     """Redirect to Pilot Studio if available, otherwise show API info"""
     import os
 
@@ -86,8 +87,8 @@ async def root():
     }
 
 
-@app.get("/health")
-async def health():
+@app.get("/health")  # type: ignore[misc]
+async def health() -> Union[Dict[str, Any], JSONResponse]:
     """Detailed health check"""
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -109,8 +110,8 @@ async def health():
         )
 
 
-@app.get("/v1/models")
-async def list_models():
+@app.get("/v1/models")  # type: ignore[misc]
+async def list_models() -> Dict[str, Any]:
     """OpenAI-compatible models endpoint"""
     models_info = router.get_available_models()
 
@@ -137,8 +138,10 @@ async def list_models():
     }
 
 
-@app.post("/v1/chat/completions")
-async def chat_completion(request: Request):
+@app.post("/v1/chat/completions")  # type: ignore[misc]
+async def chat_completion(
+    request: Request,
+) -> Union[JSONResponse, StreamingResponse]:
     """
     OpenAI-compatible chat completions endpoint
     Automatically routes to best local model based on prompt content
@@ -185,13 +188,14 @@ async def chat_completion(request: Request):
                         "usage": {
                             "prompt_tokens": len(user_message.split()),
                             "completion_tokens": len(result["answer"].split()),
-                            "total_tokens": len(user_message.split()) + len(result["answer"].split()),
+                            "total_tokens": len(user_message.split())
+                            + len(result["answer"].split()),
                         },
                         "metadata": {
                             "orchestration": True,
                             "subtasks": result["subtasks"],
                             "models_used": result["models_used"],
-                            "orchestration_steps": result["orchestration_steps"]
+                            "orchestration_steps": result["orchestration_steps"],
                         },
                     }
                     return JSONResponse(response_data)
@@ -225,12 +229,12 @@ async def chat_completion(request: Request):
                     f"{OLLAMA_URL}/api/chat", json=ollama_payload, timeout=None
                 )
 
-                async def generate():
+                async def generate() -> AsyncIterator[str]:
                     buffer = ""
                     async for chunk in response.aiter_bytes():
-                        buffer += chunk.decode('utf-8')
-                        while '\n' in buffer:
-                            line, buffer = buffer.split('\n', 1)
+                        buffer += chunk.decode("utf-8")
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
                             if line.strip():
                                 try:
                                     data = json.loads(line)
@@ -248,7 +252,9 @@ async def chat_completion(request: Request):
                                                         "content", ""
                                                     )
                                                 },
-                                                "finish_reason": "stop" if data.get("done") else None,
+                                                "finish_reason": (
+                                                    "stop" if data.get("done") else None
+                                                ),
                                             }
                                         ],
                                     }
@@ -314,14 +320,14 @@ async def chat_completion(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/gateway/models")
-async def gateway_models():
+@app.get("/gateway/models")  # type: ignore[misc]
+async def gateway_models() -> Dict[str, Any]:
     """Gateway-specific endpoint to view routing configuration"""
     return router.get_available_models()
 
 
-@app.post("/gateway/route")
-async def test_routing(request: Request):
+@app.post("/gateway/route")  # type: ignore[misc]
+async def test_routing(request: Request) -> Dict[str, Any]:
     """Test endpoint to see which model would be selected for a prompt"""
     payload = await request.json()
     prompt = payload.get("prompt", "")
@@ -334,19 +340,20 @@ async def test_routing(request: Request):
     return {"prompt": prompt, "selected_model": model, "reason": reason}
 
 
-@app.post("/gateway/shutdown")
-async def shutdown_server():
+@app.post("/gateway/shutdown")  # type: ignore[misc]
+async def shutdown_server() -> Dict[str, str]:
     """Gracefully shutdown the gateway server"""
     logger.info("🛑 Shutdown requested via API")
 
-    def shutdown():
+    def shutdown() -> None:
         import signal
-        import sys
+
         logger.info("Shutting down server...")
         os.kill(os.getpid(), signal.SIGTERM)
 
     # Schedule shutdown after response is sent
     import threading
+
     threading.Timer(1.0, shutdown).start()
 
     return {"status": "shutting_down", "message": "Server will stop in 1 second"}
@@ -372,4 +379,5 @@ if __name__ == "__main__":
     logger.info(f"Streaming: {'enabled' if ENABLE_STREAMING else 'disabled'}")
     logger.info(f"Dashboard: http://localhost:{GATEWAY_PORT}/studio")
 
-    uvicorn.run(app, host="0.0.0.0", port=GATEWAY_PORT, log_level="info")
+    bind_host = os.getenv("GATEWAY_HOST", "0.0.0.0")  # nosec B104
+    uvicorn.run(app, host=bind_host, port=GATEWAY_PORT, log_level="info")

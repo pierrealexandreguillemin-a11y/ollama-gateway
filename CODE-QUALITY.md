@@ -8,14 +8,14 @@
 
 ## 📊 Quality Metrics
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| **Type Safety** | 95% | 100% | ✅ |
-| **Linting** | 0 errors | 0 errors | ✅ |
-| **Formatting** | 100% | 100% | ✅ |
-| **Security** | 0 vulns | 0 vulns | ✅ |
-| **Accessibility** | WCAG AA | 100% | ✅ |
-| **Test Coverage** | 80% | N/A | 🔜 |
+| Metric            | Target   | Current  | Status |
+| ----------------- | -------- | -------- | ------ |
+| **Type Safety**   | 95%      | 100%     | ✅     |
+| **Linting**       | 0 errors | 0 errors | ✅     |
+| **Formatting**    | 100%     | 100%     | ✅     |
+| **Security**      | 0 vulns  | 0 vulns  | ✅     |
+| **Accessibility** | WCAG AA  | 100%     | ✅     |
+| **Test Coverage** | 80%      | N/A      | 🔜     |
 
 ---
 
@@ -26,6 +26,7 @@
 ### Python (Backend)
 
 **VSCode Extensions Recommandées**:
+
 ```json
 {
   "recommendations": [
@@ -41,6 +42,7 @@
 ```
 
 **VSCode Settings** (`settings.json`):
+
 ```json
 {
   "[python]": {
@@ -59,6 +61,7 @@
 ```
 
 **Résultat**:
+
 - ✅ Erreurs ROUGES inline (Pylance)
 - ✅ Warnings JAUNES inline (Flake8)
 - ✅ Auto-format sur sauvegarde (Black)
@@ -67,6 +70,7 @@
 ### JavaScript (Frontend)
 
 **VSCode Extensions Recommandées**:
+
 ```json
 {
   "recommendations": [
@@ -79,6 +83,7 @@
 ```
 
 **VSCode Settings** (`settings.json`):
+
 ```json
 {
   "[javascript]": {
@@ -94,6 +99,7 @@
 ```
 
 **Résultat**:
+
 - ✅ ESLint errors inline
 - ✅ Auto-fix sur sauvegarde
 - ✅ Prettier formatting automatique
@@ -120,6 +126,7 @@ pre-commit install --hook-type commit-msg
 ### Tools Configurés
 
 #### Python
+
 - **Black** (formatter): 100 chars max, style cohérent
 - **isort** (import sorter): Imports alphabétiques, groupés
 - **Flake8** (linter): PEP 8 compliance, 0 errors
@@ -127,10 +134,12 @@ pre-commit install --hook-type commit-msg
 - **Bandit** (security): Scan vulnérabilités
 
 #### JavaScript
+
 - **ESLint** (linter): Best practices, no unused vars
 - **Prettier** (formatter): Consistent code style
 
 #### General
+
 - **Trailing whitespace** removal
 - **End-of-file** fixer
 - **YAML/JSON** syntax validation
@@ -185,6 +194,7 @@ make check            # Full validation (lint + type + security)
 **Required Format**: `type(scope): subject`
 
 **Types Autorisés**:
+
 - `feat`: Nouvelle fonctionnalité
 - `fix`: Correction de bug
 - `docs`: Documentation uniquement
@@ -197,6 +207,7 @@ make check            # Full validation (lint + type + security)
 - `build`: Build system changes
 
 **Exemples Valides**:
+
 ```bash
 ✅ git commit -m "feat: add ARIA live regions for screen readers"
 ✅ git commit -m "fix: prevent streaming announcement spam"
@@ -205,6 +216,7 @@ make check            # Full validation (lint + type + security)
 ```
 
 **Exemples Invalides**:
+
 ```bash
 ❌ git commit -m "Added stuff"           # No type
 ❌ git commit -m "feat: Added feature."  # Ends with period
@@ -228,14 +240,14 @@ SKIP=flake8,mypy git commit -m "feat: temporary workaround"
 
 ## 🔧 Configuration Files
 
-| File | Purpose | Documentation |
-|------|---------|---------------|
-| `.pre-commit-config.yaml` | Pre-commit hooks config | [pre-commit.com](https://pre-commit.com) |
-| `.eslintrc.json` | ESLint rules for JavaScript | [eslint.org](https://eslint.org) |
-| `.prettierrc` | Prettier formatting config | [prettier.io](https://prettier.io) |
-| `pyproject.toml` | Python tools config (black, isort, mypy) | [PEP 518](https://peps.python.org/pep-0518/) |
-| `.flake8` | Flake8 linting rules | [flake8.pycqa.org](https://flake8.pycqa.org) |
-| `.commitlintrc.json` | Commit message validation | [commitlint.js.org](https://commitlint.js.org) |
+| File                      | Purpose                                  | Documentation                                  |
+| ------------------------- | ---------------------------------------- | ---------------------------------------------- |
+| `.pre-commit-config.yaml` | Pre-commit hooks config                  | [pre-commit.com](https://pre-commit.com)       |
+| `.eslintrc.json`          | ESLint rules for JavaScript              | [eslint.org](https://eslint.org)               |
+| `.prettierrc`             | Prettier formatting config               | [prettier.io](https://prettier.io)             |
+| `pyproject.toml`          | Python tools config (black, isort, mypy) | [PEP 518](https://peps.python.org/pep-0518/)   |
+| `.flake8`                 | Flake8 linting rules                     | [flake8.pycqa.org](https://flake8.pycqa.org)   |
+| `.commitlintrc.json`      | Commit message validation                | [commitlint.js.org](https://commitlint.js.org) |
 
 ---
 
@@ -295,6 +307,7 @@ git push origin feature-branch
 ### Troubleshooting
 
 **Pre-commit hooks fail on commit**:
+
 ```bash
 # See which hook failed
 pre-commit run --all-files
@@ -310,6 +323,7 @@ pre-commit install --install-hooks
 ```
 
 **ESLint errors**:
+
 ```bash
 # Auto-fix JavaScript
 npx eslint studio/*.js --fix
@@ -319,6 +333,7 @@ make lint-js
 ```
 
 **Python import errors**:
+
 ```bash
 # Fix import order
 isort .
@@ -333,17 +348,17 @@ make format-python
 
 ### Current Project Status
 
-| Category | Tool | Status | Notes |
-|----------|------|--------|-------|
-| **Python Format** | Black | ✅ 100% | All files formatted |
-| **Python Imports** | isort | ✅ 100% | Sorted alphabetically |
-| **Python Lint** | Flake8 | ✅ 0 errors | PEP 8 compliant |
-| **Python Types** | mypy | ⚠️ Baseline | Strict mode ready |
-| **Python Security** | Bandit | ✅ 0 vulns | No security issues |
-| **JS Lint** | ESLint | ✅ 0 errors | Best practices |
-| **JS Format** | Prettier | ✅ 100% | Consistent style |
-| **Accessibility** | Manual | ✅ WCAG AA | 100% compliant |
-| **Commits** | Commitlint | ✅ 100% | Conventional format |
+| Category            | Tool       | Status      | Notes                 |
+| ------------------- | ---------- | ----------- | --------------------- |
+| **Python Format**   | Black      | ✅ 100%     | All files formatted   |
+| **Python Imports**  | isort      | ✅ 100%     | Sorted alphabetically |
+| **Python Lint**     | Flake8     | ✅ 0 errors | PEP 8 compliant       |
+| **Python Types**    | mypy       | ⚠️ Baseline | Strict mode ready     |
+| **Python Security** | Bandit     | ✅ 0 vulns  | No security issues    |
+| **JS Lint**         | ESLint     | ✅ 0 errors | Best practices        |
+| **JS Format**       | Prettier   | ✅ 100%     | Consistent style      |
+| **Accessibility**   | Manual     | ✅ WCAG AA  | 100% compliant        |
+| **Commits**         | Commitlint | ✅ 100%     | Conventional format   |
 
 ### Baseline Violations (Temporary)
 
@@ -356,12 +371,14 @@ Any new violations introduced will BLOCK commits.
 ## 📊 Continuous Improvement
 
 ### Monthly Tasks
+
 - [ ] Run `pre-commit autoupdate`
 - [ ] Review and update linting rules
 - [ ] Check for new security vulnerabilities
 - [ ] Update dependencies
 
 ### Before Major Releases
+
 - [ ] Full `make check` on all files
 - [ ] Run accessibility audit (Axe DevTools)
 - [ ] Review code coverage reports

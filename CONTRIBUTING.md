@@ -5,6 +5,7 @@ Thank you for your interest in contributing to Ollama Gateway!
 ## Getting Started
 
 ### Prerequisites
+
 - Python 3.9 or higher
 - Ollama installed and running locally
 - At least one Ollama model installed
@@ -26,13 +27,16 @@ python main.py
 ## Development Guidelines
 
 ### Code Style
+
 - Follow PEP 8 for Python code
 - Use type hints where appropriate
 - Add docstrings to all functions and classes
 - Keep functions focused and small
 
 ### Testing
+
 Before submitting a PR, ensure:
+
 ```bash
 # Run the test suite
 ./test-gateway.sh
@@ -51,6 +55,7 @@ curl -X POST http://localhost:4000/gateway/route \
 To add support for a new model:
 
 1. Update `config.json`:
+
 ```json
 {
   "models": {
@@ -64,6 +69,7 @@ To add support for a new model:
 ```
 
 2. Test the routing:
+
 ```bash
 curl -X POST http://localhost:4000/gateway/route \
   -H "Content-Type: application/json" \
@@ -97,6 +103,7 @@ ollama-gateway/
 5. Open a Pull Request
 
 ### PR Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Tests pass
 - [ ] Documentation updated
@@ -106,6 +113,7 @@ ollama-gateway/
 ## Reporting Issues
 
 When reporting issues, please include:
+
 - Gateway version
 - Python version
 - Ollama version
